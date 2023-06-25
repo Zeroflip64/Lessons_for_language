@@ -108,7 +108,7 @@ def ss_features_fill_mask_data():
       model="distilbert-base-multilingual-cased",
       tokenizer="distilbert-base-multilingual-cased"
   )
-  syb_all=pd.read_csv('https://raw.githubusercontent.com/Zeroflip64/Lessons_for_language/blob/main/sub_all.csv')
+  syb_all=pd.read_csv('https://github.com/Zeroflip64/Lessons_for_language/blob/main/sub_all.csv')
 
 
   
