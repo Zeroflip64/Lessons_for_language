@@ -1,0 +1,15 @@
+streamlit==0.82.0
+transformers_interpret==0.5.1
+pandas==1.0.3
+transformers==4.3.2
+psutil==5.7.0
+pysrt==1.1.2
+nltk==3.6.3
+gensim==4.1.2
+scikit-learn
+textstat
+click
+pyinflect
+pyspellchecker
+spacy==3.0.0
+en_core_web_sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.0.0/en_core_web_sm-3.0.0.tar.gz
