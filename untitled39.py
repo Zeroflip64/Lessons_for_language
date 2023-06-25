@@ -35,6 +35,7 @@ from transformers import pipeline
 from spellchecker import SpellChecker
 import en_core_web_sm
 import streamlit as st
+nlp = spacy.load("en_core_web_sm")
 
 class SentenceSimilarity:
   def __init__(self, model_name='distilbert-base-uncased'):
