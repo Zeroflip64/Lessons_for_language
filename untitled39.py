@@ -35,25 +35,25 @@ from transformers import pipeline
 from spellchecker import SpellChecker
 import en_core_web_sm
 import streamlit as st
-nlp = spacy.load("en_core_web_sm")
-
-class SentenceSimilarity:
-  def __init__(self, model_name='distilbert-base-uncased'):
-      self.tokenizer = DistilBertTokenizer.from_pretrained(model_name)
-      self.model = DistilBertModel.from_pretrained(model_name)
-
-  def sentence_to_vec(self, sentence: str):
-      inputs = self.tokenizer(sentence, return_tensors="pt")
-      outputs = self.model(**inputs)
-      return outputs.last_hidden_state.mean(dim=1).detach().numpy().squeeze()
-
-  def compare_sentences(self, sentence1: str, sentence2: str):
-      vec1 = self.sentence_to_vec(sentence1)
-      vec2 = self.sentence_to_vec(sentence2)
-      similarity = 1 - cosine(vec1, vec2)
-      return similarity
+nlp = en_core_web_sm
 
 
+@st.cashe_data():
+def init_model(model_name='distilbert-base-uncased'):
+    tokenizer = DistilBertTokenizer.from_pretrained(model_name)
+    model = DistilBertModel.from_pretrained(model_name)
+    return tokenizer, model
+
+def sentence_to_vec(sentence, tokenizer, model):
+    inputs = tokenizer(sentence, return_tensors="pt")
+    outputs = model(**inputs)
+    return outputs.last_hidden_state.mean(dim=1).detach().numpy().squeeze()
+
+def compare_sentences(sentence1, sentence2, tokenizer, model):
+    vec1 = sentence_to_vec(sentence1, tokenizer, model)
+    vec2 = sentence_to_vec(sentence2, tokenizer, model)
+    similarity = 1 - cosine(vec1, vec2)
+    return similarity
 
 
 class Features:
@@ -110,7 +110,7 @@ url = 'https://raw.githubusercontent.com/Zeroflip64/Lessons_for_language/main/su
 syb_all = pd.read_csv(url)
 
   
-ss=SentenceSimilarity()
+tokenizer, model = init_model()
 
 
 document=None
@@ -123,7 +123,6 @@ if uploaded_file is not None:
 
 clean=Features(document)
 df=clean.sentences
-ss=SentenceSimilarity()
 
 def empty_words(df):
   type_of_words={'глагол':'VERB','сущ':'NOUN','прил':'PRON'}
