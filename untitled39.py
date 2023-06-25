@@ -117,7 +117,7 @@ uploaded_file = st.file_uploader("Загрузите ваш документ", t
 
 if uploaded_file is not None:
     document = uploaded_file.read().decode('utf-8')
-    st.text(document)
+    
 
 
 clean=Features(document)
@@ -126,7 +126,7 @@ ss=SentenceSimilarity()
 
 def empty_words(df):
   type_of_words={'глагол':'VERB','сущ':'NOUN','прил':'PRON'}
-  tape=input('Выбирите тип слова и впешити (глагол , сущ , прил) ')
+  tape=st.input('Выбирите тип слова и впешити (глагол , сущ , прил) ')
   text=None
   count=0
 
@@ -158,11 +158,11 @@ def empty_words(df):
   variants.append(word)
 
   sentences=sentenses_with_empty.replace('[MASK]','_________')
-  print(f"Выбери верное слово в предложении {sentences}")
-  print(f'Варианты слов {variants}')
+  st.write(f"Выбери верное слово в предложении {sentences}")
+  st.write(f'Варианты слов {variants}')
   if input()==word:
-    print('Поздравляем вы выбрали верное слово')
+    st.write('Поздравляем вы выбрали верное слово')
   else:
-    print(f'Вы ошиблись, верное слово {word}')
+    st.write(f'Вы ошиблись, верное слово {word}')
 
 empty_words(df)
