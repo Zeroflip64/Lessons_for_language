@@ -126,7 +126,7 @@ ss=SentenceSimilarity()
 
 def empty_words(df):
   type_of_words={'глагол':'VERB','сущ':'NOUN','прил':'PRON'}
-  tape=st.input('Выбирите тип слова и впешити (глагол , сущ , прил) ')
+  tape=st.text_input('Выбирите тип слова и впешити (глагол , сущ , прил) ')
   text=None
   count=0
 
@@ -160,7 +160,7 @@ def empty_words(df):
   sentences=sentenses_with_empty.replace('[MASK]','_________')
   st.write(f"Выбери верное слово в предложении {sentences}")
   st.write(f'Варианты слов {variants}')
-  if input()==word:
+  if st.text_input()==word:
     st.write('Поздравляем вы выбрали верное слово')
   else:
     st.write(f'Вы ошиблись, верное слово {word}')
