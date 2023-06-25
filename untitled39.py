@@ -126,7 +126,7 @@ ss=SentenceSimilarity()
 
 def empty_words(df):
   type_of_words={'глагол':'VERB','сущ':'NOUN','прил':'PRON'}
-  tape=st.text_input('Выбирите тип слова и впешити (глагол , сущ , прил) ')
+  tape=st.text_input('Выбирите тип слова и впешити ("глагол", "сущ" , "прил") ')
   text=None
   count=0
 
