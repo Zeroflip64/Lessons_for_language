@@ -36,7 +36,7 @@ from spellchecker import SpellChecker
 import en_core_web_sm
 import streamlit as st
 
-@st.cahe_data()
+@st.cache_data() 
 def ss_features_fill_mask_data():
   class SentenceSimilarity:
       def __init__(self, model_name='distilbert-base-uncased'):
