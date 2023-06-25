@@ -57,3 +57,4 @@ class SentenceSimilarity:
         vec2 = self.sentence_to_vec(sentence2)
         similarity = 1 - cosine(vec1, vec2)
         return similarity
+st.write('Hey')
