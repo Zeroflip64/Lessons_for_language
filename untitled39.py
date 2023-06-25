@@ -35,7 +35,6 @@ from transformers import pipeline
 from spellchecker import SpellChecker
 import en_core_web_sm
 import streamlit as st
-
 @st.cache_data()
 
 def ss_features_fill_mask_data():
@@ -108,8 +107,8 @@ def ss_features_fill_mask_data():
       model="distilbert-base-multilingual-cased",
       tokenizer="distilbert-base-multilingual-cased"
   )
-  syb_all=pd.read_csv('https://github.com/Zeroflip64/Lessons_for_language/blob/main/sub_all.csv')
-
+  url = 'https://raw.githubusercontent.com/Zeroflip64/Lessons_for_language/main/sub_all.csv'
+  syb_all = pd.read_csv(url)
 
   
 
