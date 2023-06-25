@@ -108,7 +108,7 @@ def ss_features_fill_mask_data():
       tokenizer="distilbert-base-multilingual-cased"
   )
   url = 'https://raw.githubusercontent.com/Zeroflip64/Lessons_for_language/main/sub_all.csv'
-  syb_all = pd.read_csv(url)
+  syb_all = pd.read_csv(url, encoding='cp1251')
 
   
 
