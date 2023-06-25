@@ -38,7 +38,7 @@ import streamlit as st
 nlp = en_core_web_sm
 
 
-@st.cashe_data():
+@st.cashe_data()
 def init_model(model_name='distilbert-base-uncased'):
     tokenizer = DistilBertTokenizer.from_pretrained(model_name)
     model = DistilBertModel.from_pretrained(model_name)
