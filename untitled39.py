@@ -36,7 +36,8 @@ from spellchecker import SpellChecker
 import en_core_web_sm
 import streamlit as st
 
-@st.cache_data() 
+@st.cache_data()
+
 def ss_features_fill_mask_data():
   class SentenceSimilarity:
       def __init__(self, model_name='distilbert-base-uncased'):
@@ -107,25 +108,10 @@ def ss_features_fill_mask_data():
       model="distilbert-base-multilingual-cased",
       tokenizer="distilbert-base-multilingual-cased"
   )
+  syb_all=pd.read_csv('https://raw.githubusercontent.com/Zeroflip64/Lessons_for_language/blob/main/sub_all.csv')
 
 
-  with open('/content/drive/MyDrive/учеба/Мастерская 3/словарь/ENRUS.TXT', 'r', encoding='cp1251') as file:
-      lines = file.readlines()
-
-
-  # Создание списка слов в четных и нечетных индексах
-  words1 = [line.strip() for i, line in enumerate(lines) if i % 2 == 0]
-  words2 = [line.strip() for i, line in enumerate(lines) if i % 2 == 1]
-
-  # Создание датафрейма из списков слов
-  syb_all = pd.DataFrame({'EN': words1, 'RUS': words2})
-  syb_all['RUS']=syb_all['RUS'].apply(lambda x:x.replace('\t',' - '))
-  syb_all['RUS']=syb_all['RUS'].apply(lambda x:'| '+x+' |')
-  # Вывод датафрейма
-  syb_all=syb_all.set_index('EN',drop=True)
-  syb_all.loc['i']='Я'
-  syb_all.loc['he']='Он'
-  syb_all.loc['she']='Она'
+  
 
   return SentenceSimilarity,Features,fill_mask,syb_all
   
