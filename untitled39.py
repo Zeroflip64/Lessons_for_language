@@ -234,13 +234,14 @@ def sentenses_by_time(sentenses_list):  # Пропуски на правильн
 
   for idx, options in zip(verbs_indices, verb_options):
     user_verb = st.selectbox(f'Выберите время глагола для пропуска {idx+1}', options, key=f'verb{idx}')
-    correct_verb = str(verb[idx])
-    if user_verb and user_verb != correct_verb:
-      st.write(f'Ошибка верное слово {correct_verb} для пропуска {idx+1}')
-      st.session_state.mistakes += 1
-    elif user_verb and user_verb == correct_verb:
-      st.write(f'Верно вы выбрали верное время для пропуска {idx+1}')
-    st.session_state.total_verbs += 1
+    if st.button('Проверить выбор', key=f'check{idx}'):
+      correct_verb = str(verb[idx])
+      if user_verb != correct_verb:
+        st.write(f'Ошибка верное слово {correct_verb} для пропуска {idx+1}')
+        st.session_state.mistakes += 1
+      else:
+        st.write(f'Верно вы выбрали верное время для пропуска {idx+1}')
+      st.session_state.total_verbs += 1
 
   if st.button('Подсчитать ошибки'):
     if st.session_state.mistakes:
