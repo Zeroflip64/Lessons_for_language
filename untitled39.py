@@ -356,7 +356,7 @@ def separate_by_meaning(sentence_list):
 
 
 def split_of_sentences(df):
-    if st.button('Получить предложение', key='new_sentence_10'):
+    if st.button('Получить предложение', key='new_sentence_15'):
         st.session_state.reset = True
 
     if 'reset' not in st.session_state or st.session_state.reset:
