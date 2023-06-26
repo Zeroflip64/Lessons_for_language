@@ -215,24 +215,26 @@ def sentenses_by_time(sentenses_list):  # Пропуски на правильн
   verb = []
   user_verbs = []
   verbs_indices = []
+  verb_options = []
 
   for token in doc:
     if token.pos_ == 'VERB':
       sen.append('_______')
       verb.append(str(token))
       verbs_indices.append(len(sen) - 1)
+      verb_options.append(verb_time(token.lemma_))
     else:
       sen.append(token)
 
   st.write(f"Выберите верное время глаголов в предложении   {' '.join([token if isinstance(token, str) else token.text for token in sen])}")
 
-  for idx in verbs_indices:
-    user_verbs.append(st.text_input(f'Выберите время глагола для пропуска {idx+1}', key=f'verb{idx}'))
+  for idx, options in zip(verbs_indices, verb_options):
+    user_verbs.append(st.selectbox(f'Выберите время глагола для пропуска {idx+1}', options, key=f'verb{idx}'))
 
   if st.button('Проверить ответы'):
     mistakes = 0
     for idx, user_verb in zip(verbs_indices, user_verbs):
-      correct_verb = str(verb_time(verb[idx]))
+      correct_verb = str(verb[idx])
       if user_verb == correct_verb:
         st.write(f'Верно вы выбрали верное время для пропуска {idx+1}')
       else:
@@ -244,9 +246,10 @@ def sentenses_by_time(sentenses_list):  # Пропуски на правильн
       st.write('Попробуйте снова')
 
     st.write(f'Количество ошибок {mistakes} из {len(verb)} вариантов')
-    del st.session_state.selected_sentence
-    for idx in verbs_indices:
-      del st.session_state[f'verb{idx}']
+    if st.button('Новое предложение'):
+      del st.session_state.selected_sentence
+      for idx in verbs_indices:
+        del st.session_state[f'verb{idx}']
     
 st.header('Упражнение 1')
 st.subheader('Упражнение где необходимо выбрать правильное слово подходящее по смыслу')
