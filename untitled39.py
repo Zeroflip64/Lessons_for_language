@@ -376,7 +376,7 @@ def split_of_sentences(df):
         user_sentences = st.text_input('Введите ваше предложение',value=st.session_state.user_sentence)
 
         if st.button('Проверить предложение'):
-            st.write(f"Предложения совпали c точностью {sentence, user_sentences,tokenizer, model)}.")
+            st.write(f"Предложения совпали c точностью {compare_sentences(sentence, user_sentences,tokenizer, model)}.")
 
     
 st.header('Словарь')
