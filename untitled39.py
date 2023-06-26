@@ -220,11 +220,13 @@ def sentenses_by_time(sentenses_list):  # Пропуски на правильн
     if token.pos_ == 'VERB':
       sen.append('_______')
       verbs_indices.append(len(sen) - 1)
-      verb_options.append(verb_time(token.lemma_))
+      options = verb_time(token.lemma_)
+      options.append(str(token))  # Add the original verb to options
+      verb_options.append(options)
       correct_verbs.append(str(token))
     else:
       sen.append(token)
-  
+
   st.write(f"Выберите верное время глаголов в предложении   {' '.join([token if isinstance(token, str) else token.text for token in sen])}")
 
   user_verbs = []
