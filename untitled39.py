@@ -206,44 +206,47 @@ def empty_words(df):# Упражение 1
             else:
                 st.write(f'Вы ошиблись, верное слово {st.session_state.correct_word}')
 
-def sentenses_by_time(sentenses_list):  # Пропуски на правильное время глагола Упражение 2
+def sentenses_by_time(sentenses_list):  # Пропуски на правильное время глагола
   if 'selected_sentence' not in st.session_state:
     st.session_state.selected_sentence = random.choice(sentenses_list)
 
   doc = nlp(st.session_state.selected_sentence)
   sen = []
   verb = []
-  mistakes = 0
-  
+  user_verbs = []
+  verbs_indices = []
+
   for token in doc:
     if token.pos_ == 'VERB':
-      sen.append(str(verb_time(token.lemma_)))
+      sen.append('_______')
       verb.append(str(token))
+      verbs_indices.append(len(sen) - 1)
     else:
       sen.append(token)
 
   st.write(f"Выберите верное время глаголов в предложении   {' '.join([token if isinstance(token, str) else token.text for token in sen])}")
-  count = 0
-  
-  for idx, word in enumerate(sen):
-    if len(word) > 20:
-      if 'user_verb_time' not in st.session_state or st.session_state.user_verb_time == idx:
-        user_word = st.text_input(f'Выберите {word}')
-        if user_word:
-          st.session_state.user_verb_time = idx + 1
-          sen[idx] = user_word
-          if user_word == verb[count]:
-            st.write('Верно вы выбрали верное время')
-          else:
-            st.write(f'Ошибка верное слово {verb[count]}')
-            mistakes += 1
-          count += 1
-  if not mistakes or (count / len(verb)) <= mistakes:
-    st.write('Вы отлично справились')
-  else:
-    st.write('Попробуйте снова')
 
-  st.write(f'Количество ошибок {mistakes} из {count} вариантов')
+  for idx in verbs_indices:
+    user_verbs.append(st.text_input(f'Выберите время глагола для пропуска {idx+1}', key=f'verb{idx}'))
+
+  if st.button('Проверить ответы'):
+    mistakes = 0
+    for idx, user_verb in zip(verbs_indices, user_verbs):
+      correct_verb = str(verb_time(verb[idx]))
+      if user_verb == correct_verb:
+        st.write(f'Верно вы выбрали верное время для пропуска {idx+1}')
+      else:
+        st.write(f'Ошибка верное слово {correct_verb} для пропуска {idx+1}')
+        mistakes += 1
+    if not mistakes:
+      st.write('Вы отлично справились')
+    else:
+      st.write('Попробуйте снова')
+
+    st.write(f'Количество ошибок {mistakes} из {len(verb)} вариантов')
+    del st.session_state.selected_sentence
+    for idx in verbs_indices:
+      del st.session_state[f'verb{idx}']
     
 st.header('Упражнение 1')
 st.subheader('Упражнение где необходимо выбрать правильное слово подходящее по смыслу')
