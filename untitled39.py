@@ -208,11 +208,9 @@ def empty_words(df):# Упражение 1
 
 def sentenses_by_time(sentenses_list):  # Пропуски на правильное время глагола
 
-  # Перезапуск
-  if 'reset' not in st.session_state or st.session_state.reset:
+  if st.button('Выбрать новое предложение') or 'selected_sentence' not in st.session_state:
     st.session_state.selected_sentence = random.choice([sent for sent in sentenses_list if len(sent.split(' ')) > 5])
-    st.session_state.reset = False
-
+  
   doc = nlp(st.session_state.selected_sentence)
   sen = []
   verbs_indices = []
@@ -249,13 +247,6 @@ def sentenses_by_time(sentenses_list):  # Пропуски на правильн
       st.write('Вы отлично справились')
 
     st.write(f'Количество ошибок {mistakes} из {len(user_verbs)} вариантов')
-
-  if st.button('Новое предложение'):
-      st.session_state.reset = True
-      for idx in range(len(verb_options)):  # Here we change from verbs_indices to verb_options, because its length will always match with the number of verbs we have
-        key = f'verb{idx}'
-        if key in st.session_state:  # Check if key exists
-          del st.session_state[key]
     
 st.header('Упражнение 1')
 st.subheader('Упражнение где необходимо выбрать правильное слово подходящее по смыслу')
