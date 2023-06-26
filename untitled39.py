@@ -312,7 +312,7 @@ def separate_by_meaning(sentence_list):
     names = []
     new_sentences = []
 
-    if st.button('Выбрать предложение', key='new_sentence_10'):
+    if st.button('Получить предложение', key='new_sentence_10'):
         st.session_state.reset = True
 
     if 'reset' not in st.session_state or st.session_state.reset:
@@ -352,9 +352,53 @@ def separate_by_meaning(sentence_list):
 
     if st.button('Проверить ответ', key='check_answer_button_10'):
         result = compare_sentences(sentence, user_sentences,tokenizer, model)
-        st.write('Ваш текст совпал по смыслу на столько %')
-        st.write(result)
+        st.write(f'Ваш текст совпал по смыслу на столько {np.round(result,1)} %')
 
+def split_of_sentences(df):
+    
+    # Initialize session state variables
+    if 'reset' not in st.session_state or st.session_state.reset:
+        st.session_state.selected_words = []
+        st.session_state.remaining_words = []
+        st.session_state.reset = False
+        st.session_state.sentence = ""
+
+    # Button to select a new sentence
+    if st.button('Выбрать случайное предложение',key='select_sentenses_11'):
+        while True:
+            sentence = random.choice(df['text'])
+            s_sentences = sentence.split(' ')
+            if 2 <= len(s_sentences) <= 8:
+                st.session_state.sentence = sentence
+                random.shuffle(s_sentences)
+                st.session_state.remaining_words = s_sentences
+                break
+
+    if st.session_state.sentence:
+        st.write(f'Выбранное предложение: {st.session_state.sentence}')
+        st.write(f'Составьте предложение из следующих слов: {st.session_state.remaining_words}')
+
+        if st.session_state.remaining_words:
+            selected_word = st.selectbox('Выберите слово:', st.session_state.remaining_words)
+
+            if selected_word:
+                # Remove the selected word from the list of remaining words and add it to the list of selected words
+                st.session_state.remaining_words.remove(selected_word)
+                st.session_state.selected_words.append(selected_word)
+
+                # Display the current state of the user's sentence
+                st.write(f'Ваше предложение: {" ".join(st.session_state.selected_words)}')
+
+        if st.button('Проверить предложение',key='check_the_sentenses'):
+            user_sentence = " ".join(st.session_state.selected_words)
+            original_bigrams = list(ngrams(st.session_state.sentence.split(), 2))
+            user_bigrams = list(ngrams(user_sentence.split(), 2))
+
+            # Compare bigrams
+            if set(user_bigrams).issubset(set(original_bigrams)):
+                st.write("Предложения совпали поздравляю.")
+            else:
+                st.write("Ошибка.")
 
 
 
@@ -387,4 +431,14 @@ translate_book(hard_words,'exesises')
 
 
 st.header('Упражнение 4')
+st.subheader('Дано предложение замените расские слова на английские и перепешите предложение')
+st.text('Нажмите кнопку получить предложение')
+st.text('Слова требующие перевода находяться в границах |_____|')
+st.text('Введите ваше предложение и нажмите Enter')
+st.text('Нажмите кнопку узнать результат')
 separate_by_meaning(df)
+st.text('Если ваш результат выше 85% то результат хороший поздравляем.')
+
+st.header('Упражнение 5')
+split_of_sentences(df)
+
