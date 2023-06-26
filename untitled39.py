@@ -139,8 +139,7 @@ syb_all=syb_all.set_index('EN',drop=True)
 tokenizer, model = init_model()
 fill_mask = load_fill_mask_pipeline()
 
-document=None
-uploaded_file = st.file_uploader("Загрузите ваш документ", type=["txt"])
+
 
 
 
@@ -365,12 +364,14 @@ def split_of_sentences(df):
 
         if st.button('Проверить предложение',key='button_of_ok'):
             st.write(f"Предложения совпали c точностью {np.round(compare_sentences(sentence, user_sentence,tokenizer, model),1)}.")
+document=None
+uploaded_file = st.file_uploader("Загрузите ваш документ", type=["txt"])
 
 if uploaded_file is not None:
     document = uploaded_file.read()
 
     if isinstance(document, bytes):
-        document = document.decode('utf-8')  # Decode bytes to string
+        document = document.decode('utf-8')  
 
     if isinstance(document, str):
         clean = Features(document)
