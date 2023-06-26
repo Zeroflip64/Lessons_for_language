@@ -355,38 +355,34 @@ def separate_by_meaning(sentence_list):
         st.write(f'Ваш текст совпал по смыслу на столько {np.round(result,1)} %')
 
 def split_of_sentences(df):
-
     if 'reset' not in st.session_state or st.session_state.reset:
-        st.session_state.selected_words = []
-        st.session_state.remaining_words = []
-        st.session_state.reset = False
-        st.session_state.sentence = ""
-        st.session_state.words_dict = {}
+        st.session_state.update({"selected_words": []})
+        st.session_state.update({"remaining_words": []})
+        st.session_state.update({"reset": False})
+        st.session_state.update({"sentence": ""})
 
-
+    # Button to select a new sentence
     if st.button('Выбрать случайное предложение'):
         while True:
             sentence = random.choice(df)
             s_sentences = sentence.split(' ')
             if 2 <= len(s_sentences) <= 8:
-                st.session_state.sentence = sentence
+                st.session_state.update({"sentence": sentence})
                 random.shuffle(s_sentences)
-                st.session_state.remaining_words = s_sentences.copy()
-                st.session_state.words_dict = {word: False for word in s_sentences}
+                st.session_state.update({"remaining_words": s_sentences})
                 break
 
     if 'sentence' in st.session_state and st.session_state.sentence:
         st.write(f'Выбранное предложение: {st.session_state.sentence}')
         st.write(f'Составьте предложение из следующих слов: {st.session_state.remaining_words}')
 
-        if 'words_dict' in st.session_state:  # Check if words_dict has been initialized
-            for word, selected in st.session_state.words_dict.items():
-                if not selected:  # Only show buttons for words that haven't been selected yet
-                    if st.button(word, key=word):  # Create button for each word
-                        st.session_state.words_dict[word] = True
-                        st.session_state.selected_words.append(word)
+        if st.session_state.remaining_words:
+            selected_word = st.radio("Выберите слово", options=st.session_state.remaining_words, key='word_selection')
+            if selected_word is not None:
+                st.session_state.selected_words.append(selected_word)
+                st.session_state.remaining_words.remove(selected_word)
 
-
+        # Display the current state of the user's sentence
         st.write(f'Ваше предложение: {" ".join(st.session_state.selected_words)}')
 
         if st.button('Проверить предложение'):
@@ -394,7 +390,7 @@ def split_of_sentences(df):
             original_bigrams = list(ngrams(st.session_state.sentence.split(), 2))
             user_bigrams = list(ngrams(user_sentence.split(), 2))
 
-
+            # Compare bigrams
             if set(user_bigrams).issubset(set(original_bigrams)):
                 st.write("Предложения совпали поздравляю.")
             else:
