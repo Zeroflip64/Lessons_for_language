@@ -148,7 +148,7 @@ else:
 clean=Features(document)
 df=clean.sentences
 hard_words=clean.hard_words()
-
+st.text(hard_words)
 
 
 def empty_words(df):# Упражение 1
