@@ -144,44 +144,54 @@ def empty_words(df):
 
     tape = st.selectbox('Выбирите тип слова', ('глагол', 'сущ', 'прил'))
 
-    word_type = type_of_words[tape]
-    sentence = None
+    if "correct_word" not in st.session_state:
+        st.session_state.correct_word = ""
+        
+    if "sentence_with_blank" not in st.session_state:
+        st.session_state.sentence_with_blank = ""
+        
+    if "variants" not in st.session_state:
+        st.session_state.variants = []
 
-    while True:
-        sentence = random.choice(df)
-        text = nlp(sentence)
+    if st.button("Generate new sentence"):
+        word_type = type_of_words[tape]
+        sentence = None
 
-        if word_type in {i.pos_ for i in text} and len(text.text) > 10:
-            break
+        while True:
+            sentence = random.choice(df)
+            text = nlp(sentence)
 
-    indices = [i for i, token in enumerate(text) if token.pos_ == word_type]
-    random_index = random.choice(indices)
+            if word_type in {i.pos_ for i in text} and len(text.text) > 10:
+                break
 
-    tokens = [token.text for token in text]
-    correct_word = tokens[random_index]
-    tokens[random_index] = '[MASK]'
-    sentence_with_blank = ' '.join(tokens)
+        indices = [i for i, token in enumerate(text) if token.pos_ == word_type]
+        random_index = random.choice(indices)
 
-    predictions = fill_mask(sentence_with_blank, top_k=4)
-    variants = set(pred['token_str'] for pred in predictions if pred['token_str'] != correct_word)
+        tokens = [token.text for token in text]
+        st.session_state.correct_word = tokens[random_index]
+        tokens[random_index] = '[MASK]'
+        sentence_with_blank = ' '.join(tokens)
 
-    if len(variants) < 4: 
-        variants.add(correct_word)
+        predictions = fill_mask(sentence_with_blank, top_k=4)
+        variants = set(pred['token_str'] for pred in predictions if pred['token_str'] != st.session_state.correct_word)
 
-    variants = list(variants)
-    random.shuffle(variants)
+        if len(variants) < 4: 
+            variants.add(st.session_state.correct_word)
 
-    st.write(f"Выбери верное слово в предложении {sentence_with_blank.replace('[MASK]', '_________')}")
-    st.write(f'Варианты слов {variants}')
+        st.session_state.variants = list(variants)
+        random.shuffle(st.session_state.variants)
+
+        st.session_state.sentence_with_blank = sentence_with_blank.replace('[MASK]', '_________')
+
+    st.write(f"Выбери верное слово в предложении {st.session_state.sentence_with_blank}")
+    st.write(f'Варианты слов {st.session_state.variants}')
 
     user_guess = st.text_input("Your Guess:")
 
     if user_guess:
-        if user_guess == correct_word:
+        if user_guess == st.session_state.correct_word:
             st.write('Поздравляем вы выбрали верное слово')
         else:
-            st.write(f'Вы ошиблись, верное слово {correct_word}')
-
-
+            st.write(f'Вы ошиблись, верное слово {st.session_state.correct_word}')
 
 empty_words(df)
