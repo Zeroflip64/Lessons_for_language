@@ -290,8 +290,8 @@ def translate_book(word, purpose):#функция работы со словам
 st.header('Словарь')
 st.subheader('В вашем тексте есть сложные слова ,постарайтесь выучить их')
 
-translate_book=translate_book(hard_words,'translate_book')
-st.write(translate_book)
+translate_b=translate_book(hard_words,'translate_book')
+st.write(translate_b)
 
 
 
