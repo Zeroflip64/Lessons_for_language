@@ -264,8 +264,7 @@ def translate_book(word, purpose):#функция работы со словам
   if purpose=='translate_book':
     help_words = pd.DataFrame({'ENG':words,'RUS':translates})
     return help_words
-
-  elif purpose =='exesises':
+  else:
     book=dict(zip(words,translates))
     st.write(book)
     if st.button('Выбрать новое слово'):
