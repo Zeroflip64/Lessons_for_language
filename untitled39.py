@@ -38,7 +38,7 @@ import streamlit as st
 nlp=spacy.load('en_core_web_sm')
 
 
-@st.cache_data(persist="disk")  
+@st.cache_resource
 def init_model(model_name='distilbert-base-uncased'):
     tokenizer = DistilBertTokenizer.from_pretrained(model_name)
     model = DistilBertModel.from_pretrained(model_name)
@@ -55,7 +55,7 @@ def compare_sentences(sentence1, sentence2, tokenizer, model):
     similarity = 1 - cosine(vec1, vec2)
     return similarity
 
-@st.cache_data(persist="disk")
+@st.cache_resource
 def load_fill_mask_pipeline():
     return pipeline(
         "fill-mask",
