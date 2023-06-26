@@ -55,7 +55,7 @@ def compare_sentences(sentence1, sentence2, tokenizer, model):
     similarity = 1 - cosine(vec1, vec2)
     return similarity
     
-@st.cache_date()
+@st.cache_data()
 def verb_time(words):  # Функция времени глагола
   inflection_tags = ['VBD', 'VBZ', 'VBG']
   timed_words = []
