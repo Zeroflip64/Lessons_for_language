@@ -129,9 +129,3 @@ clean=Features(document)
 df=clean.sentences
 st.write(df)
 
-  if st.text_input()==word:
-    st.write('Поздравляем вы выбрали верное слово')
-  else:
-    st.write(f'Вы ошиблись, верное слово {word}')
-
-empty_words(df)
