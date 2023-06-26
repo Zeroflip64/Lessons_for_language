@@ -297,9 +297,10 @@ def translate_book(words,purpose):#функция работы со словам
             st.write('Все верно')
         else:
             st.write('Неверно, правильный ответ:', selected_word)
+            
+st.header('Словарь')
+st.subheader('В вашем тексте есть сложные слова ,постарайтесь выучить их')
 
-st.header('В вашем тексте есть сложные слова ,постарайтесь выучить их')
-st.subhead('Словарь')
 translate_book=translate_book(hard_words,'translate_book')
 st.write(translate_book)
 
