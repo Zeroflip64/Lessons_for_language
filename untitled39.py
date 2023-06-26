@@ -171,29 +171,33 @@ if document is not None:
             word_type = type_of_words[tape]
             sentence = None
     
-            while True:
-                sentence = random.choice(df)
-                text = nlp(sentence)
+                while True:
+                    sentence = random.choice(df)
+                    text = nlp(sentence)
+            
+                    if word_type in {i.pos_ for i in text} and len(text.text) > 10:
+                        break
     
-                if word_type in {i.pos_ for i in text} and len(text.text) > 10:
-                    break
+        indices = [i for i, token in enumerate(text) if token.pos_ == word_type]
+        random_index = random.choice(indices)
     
-            indices = [i for i, token in enumerate(text) if token.pos_ == word_type]
-            random_index = random.choice(indices)
+        tokens = [token.text for token in text]
+        st.session_state.correct_word = tokens[random_index]
+        tokens[random_index] = '[MASK]'
+        sentence_with_blank = ' '.join(tokens)
     
-            tokens = [token.text for token in text]
-            st.session_state.correct_word = tokens[random_index]
-            tokens[random_index] = '[MASK]'
-            sentence_with_blank = ' '.join(tokens)
+        predictions = fill_mask(sentence_with_blank, top_k=4)
+        variants = set(pred['token_str'] for pred in predictions)
     
-            predictions = fill_mask(sentence_with_blank, top_k=4)
-            variants = set(pred['token_str'] for pred in predictions if pred['token_str'] != st.session_state.correct_word)
+        # add the correct answer to the variants
+        variants.add(st.session_state.correct_word)
     
-            if len(variants) < 4: 
-                variants.add(st.session_state.correct_word)
+        # if there are more than 4 words, remove extra words
+        while len(variants) > 4:
+            variants.remove(random.choice(list(variants)))
     
-            st.session_state.variants = list(variants)
-            random.shuffle(st.session_state.variants)
+        st.session_state.variants = list(variants)
+        random.shuffle(st.session_state.variants)
     
             st.session_state.sentence_with_blank = sentence_with_blank.replace('[MASK]', '_________')
     
