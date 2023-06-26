@@ -129,15 +129,37 @@ class Features:
           return FK_grade
       else:
           return 0
-
-
-
+          
 url = 'https://raw.githubusercontent.com/Zeroflip64/Lessons_for_language/main/sub_all.csv'
 syb_all = pd.read_csv(url)
 syb_all=syb_all.set_index('EN',drop=True)
-  
+
 tokenizer, model = init_model()
 fill_mask = load_fill_mask_pipeline()
+
+document=None
+uploaded_file = st.file_uploader("Загрузите ваш документ", type=["txt"])
+
+
+if uploaded_file is not None:
+    document = uploaded_file.read()
+
+    # make sure document is a string
+    if isinstance(document, bytes):
+        document = document.decode('utf-8')
+
+    if isinstance(document, str):
+        clean = Features(document)
+    else:
+        st.error('The uploaded file could not be processed.')
+else:
+    st.error('No file uploaded.')
+
+
+
+clean=Features(document)
+df=clean.sentences
+hard_words=clean.hard_words()
 
 
 
@@ -364,31 +386,7 @@ def split_of_sentences(df):
 
         if st.button('Проверить предложение',key='button_of_ok'):
             st.write(f"Предложения совпали c точностью {np.round(compare_sentences(sentence, user_sentence,tokenizer, model),1)}.")
-document=None
-uploaded_file = st.file_uploader("Загрузите ваш документ", type=["txt"])
 
-
-if uploaded_file is not None:
-    document = uploaded_file.read()
-
-    # make sure document is a string
-    if isinstance(document, bytes):
-        document = document.decode('utf-8')
-
-    if isinstance(document, str):
-        clean = Features(document)
-    else:
-        st.error('The uploaded file could not be processed.')
-else:
-    st.error('No file uploaded.')
-
-
-
-clean=Features(document)
-df=clean.sentences
-hard_words=clean.hard_words()
-
-        
 st.header('Словарь')
 st.subheader('В вашем тексте есть сложные слова ,постарайтесь выучить их')
 
