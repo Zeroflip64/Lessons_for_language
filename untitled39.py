@@ -267,7 +267,7 @@ def translate_book(word, purpose):#функция работы со словам
 
   elif purpose =='exesises':
     book=dict(zip(words,translates))
-
+    st.write(book)
     if st.button('Выбрать новое слово'):
         st.session_state.selected_word = random.choice(list(book.keys()))
 
