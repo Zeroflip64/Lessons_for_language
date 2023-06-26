@@ -364,9 +364,9 @@ def split_of_sentences(df):
         st.session_state.sentence = ""
 
 
-    if st.button('Выбрать случайное предложение'):
+    if st.button('Выбрать случайное предложение',key='random_senteses'):
         while True:
-            sentence = random.choice(df)
+            sentence = random.choice(df[)
             s_sentences = sentence.split(' ')
             if 2 <= len(s_sentences) <= 8:
                 st.session_state.sentence = sentence
@@ -375,31 +375,27 @@ def split_of_sentences(df):
                 break
 
     if 'sentence' in st.session_state and st.session_state.sentence:
-        st.write(f'Выбранное предложение: {st.session_state.sentence}')
+
         st.write(f'Составьте предложение из следующих слов: {st.session_state.remaining_words}')
 
-        if st.session_state.remaining_words:
-            selected_word = st.selectbox('Выберите слово:', st.session_state.remaining_words)
+        for word in st.session_state.remaining_words:
+            if st.button(word, key=word):  
+                st.session_state.remaining_words.remove(word)
+                st.session_state.selected_words.append(word)
 
-            if selected_word:
-                # Remove the selected word from the list of remaining words and add it to the list of selected words
-                st.session_state.remaining_words.remove(selected_word)
-                st.session_state.selected_words.append(selected_word)
 
-                # Display the current state of the user's sentence
-                st.write(f'Ваше предложение: {" ".join(st.session_state.selected_words)}')
+        st.write(f'Ваше предложение: {" ".join(st.session_state.selected_words)}')
 
         if st.button('Проверить предложение'):
             user_sentence = " ".join(st.session_state.selected_words)
             original_bigrams = list(ngrams(st.session_state.sentence.split(), 2))
             user_bigrams = list(ngrams(user_sentence.split(), 2))
 
-            # Compare bigrams
+
             if set(user_bigrams).issubset(set(original_bigrams)):
                 st.write("Предложения совпали поздравляю.")
             else:
                 st.write("Ошибка.")
-
 
 
 st.header('Словарь')
