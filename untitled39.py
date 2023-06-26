@@ -286,7 +286,7 @@ def translate_book(word, purpose):#функция работы со словам
 
     if 'reset' not in st.session_state or st.session_state.reset:
       st.session_state.selected_word = random.choice(list(book.keys()))
-      st.session_state.reset = False  # Reset the reset state
+      st.session_state.reset = False 
 
     selected_word = st.session_state.selected_word
     word_translation = book[selected_word]
@@ -316,7 +316,7 @@ def separate_by_meaning(sentence_list):
         st.session_state.reset = True
 
     if 'reset' not in st.session_state or st.session_state.reset:
-        # Select a sentence with more than 4 words
+
         while True:
             st.session_state.selected_sentence = random.choice(df)
             if len(st.session_state.selected_sentence.split()) > 4:
@@ -371,7 +371,7 @@ def split_of_sentences(df):
     sentence = st.session_state.selected_sentence
 
     if 'selected_sentence' in st.session_state and st.session_state.selected_sentence:
-        # Shuffling words and setting user sentence state
+
         words = sentence.split()
         random.shuffle(words)
         st.session_state.selected_words = words
@@ -382,7 +382,7 @@ def split_of_sentences(df):
         user_sentence = st.text_input('Введите ваше предложение', value=st.session_state.user_sentence,key='choosing')
 
         if st.button('Проверить предложение',key='button_of_ok'):
-            st.write(f"Предложения совпали c точностью {compare_sentences(sentence, user_sentence,tokenizer, model)}.")
+            st.write(f"Предложения совпали c точностью {np.round(compare_sentences(sentence, user_sentence,tokenizer, model),1)}.")
 
     
 st.header('Словарь')
@@ -423,5 +423,9 @@ separate_by_meaning(df)
 st.text('Если ваш результат выше 85% то результат хороший поздравляем.')
 
 st.header('Упражнение 5')
+st.subheader('Необходимо из слов записать предложение')
+st.text('Нажмите кнопку получить предложение')
+st.text('Из полученных слов запишите предложение и нажмите Enter')
+st.text('Нажмите кнопку подтверждения')
 split_of_sentences(df)
-
+st.text('Если ваш результат выше 90% поздравляю')
