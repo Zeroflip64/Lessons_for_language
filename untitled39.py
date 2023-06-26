@@ -151,7 +151,7 @@ if document is not None:
     clean = Features(document)
     df=clean.sentences
     hard_words=clean.hard_words()    
-    st.write('Сложность вашего текста {clean.gunning_fog()}
+    st.write('Сложность вашего текста {clean.gunning_fog()}')
 
     def empty_words(df):# Упражение 1
         type_of_words = {'глагол':'VERB', 'сущ':'NOUN', 'прил':'PRON'}
