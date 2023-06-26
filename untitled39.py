@@ -143,7 +143,7 @@ def empty_words(df):
     
   type_of_words={'глагол':'VERB','сущ':'NOUN','прил':'PRON'}
   options = list(type_of_words.keys())
-  tape = st.selectbox('Выбирите тип слова и впешити (глагол , сущ , прил)', options)
+  tape = st.text_input('Выбирите тип слова и впешити :глагол , сущ , прил')
 
   text=None
   count=0
