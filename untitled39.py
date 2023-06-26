@@ -377,8 +377,8 @@ def split_of_sentences(df):
         st.write(f'Составьте предложение из следующих слов: {st.session_state.remaining_words}')
 
         if st.session_state.remaining_words:
-            selected_word = st.radio("Выберите слово", options=st.session_state.remaining_words, key='word_selection')
-            if selected_word is not None:
+            selected_word = st.selectbox("Выберите слово", options=st.session_state.remaining_words, key='word_selection')
+            if st.button("Add word"):
                 st.session_state.selected_words.append(selected_word)
                 st.session_state.remaining_words.remove(selected_word)
 
@@ -395,7 +395,6 @@ def split_of_sentences(df):
                 st.write("Предложения совпали поздравляю.")
             else:
                 st.write("Ошибка.")
-
 
 st.header('Словарь')
 st.subheader('В вашем тексте есть сложные слова ,постарайтесь выучить их')
