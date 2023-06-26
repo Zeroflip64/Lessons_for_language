@@ -140,47 +140,49 @@ df=clean.sentences
 st.write(df)
 
 def empty_words(df):
-    
-  type_of_words={'глагол':'VERB','сущ':'NOUN','прил':'PRON'}
-  options = list(type_of_words.keys())
-  tape = st.text_input('Выбирите тип слова и впешити :глагол , сущ , прил')
+    type_of_words = {'глагол': 'VERB', 'сущ': 'NOUN', 'прил': 'PRON'}
+    tape = st.text_input('Выбирите тип слова и впешити :глагол , сущ , прил')
+    word_type = type_of_words.get(tape)
 
-  text=None
-  count=0
+    if word_type is not None:
+        # Select random sentence until one meets criteria
+        while True:
+            sentence = random.choice(df)
+            text = nlp(sentence)
+            if word_type in [i.pos_ for i in text] and len(text.text) > 10:
+                break
 
-  while count!=1:
-    sentenses=random.choice(df)
-    text=nlp(sentenses)
+        # Select a random index of the chosen word type in the sentence
+        indices = [i for i, token in enumerate(text) if token.pos_ == word_type]
+        random_index = random.choice(indices)
 
-    if type_of_words[tape] in [i.pos_ for i in text] and len(text.text)>10:
-      count+=1
-      text=text
+        # Create a sentence with a blank
+        tokens = [token.text for token in text]
+        correct_word = tokens[random_index]
+        tokens[random_index] = '[MASK]'
+        sentence_with_blank = ' '.join(tokens)
 
+        # Get prediction variants
+        predictions = fill_mask(sentence_with_blank, top_k=4)
+        variants = [pred['token_str'] for pred in predictions if pred['token_str'] != correct_word]
 
+        if len(variants) < 4:  # If not enough variants, add the correct word
+            variants.append(correct_word)
 
-  pos=[i[0] for i in enumerate(text)if i[-1].pos_==type_of_words[tape]]# ИНДЕКС
-  random_choise=random.choice(pos)
-  new_text=[i.text for i in text]
-  word=new_text[random_choise]
-  new_text[random_choise]='[MASK]'# Создали пропуск
-  sentenses_with_empty=' '.join(new_text)
+        # Shuffle the variants so the correct word is not always last
+        random.shuffle(variants)
 
+        st.write(f"Выбери верное слово в предложении {sentence_with_blank.replace('[MASK]', '_________')}")
+        st.write(f'Варианты слов {variants}')
 
-  senten = [sentenses_with_empty]
-  variants = []
-  for sentence in senten:
-      predictions = fill_mask(sentence, top_k=3)
-      for i, pred in enumerate(predictions):
-        if pred['token_str'] != word:
-          variants.append(pred['token_str'])
-  variants.append(word)
+        user_guess = st.text_input("Your Guess: ")
 
-  sentences=sentenses_with_empty.replace('[MASK]','_________')
-  st.write(f"Выбери верное слово в предложении {sentences}")
-  st.write(f'Варианты слов {variants}')
-  if st.text_input()==word:
-    st.write('Поздравляем вы выбрали верное слово')
-  else:
-    st.write(f'Вы ошиблись, верное слово {word}')
+        if user_guess == correct_word:
+            st.write('Поздравляем вы выбрали верное слово')
+        else:
+            st.write(f'Вы ошиблись, верное слово {correct_word}')
+
+    else:
+        st.write("Please select a valid word type.")
 
 empty_words(df)
