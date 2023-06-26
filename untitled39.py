@@ -326,7 +326,7 @@ def separate_by_meaning(sentence_list):
     sentence = st.session_state.selected_sentence
 
     # Преобразование предложения в нормальную форму и исправление орфографии
-    clean_sentences = nlp(' '.join([to_base_form(correct_spelling(i)).lower() for i in sentence.split(' ')]))
+    clean_sentences = nlp(' '.join([to_base_form(correct_spelling(i)).lower() if to_base_form(correct_spelling(i)) is not None else '' for i in sentence.split(' ')]))
 
     y = nlp(sentence)
 
