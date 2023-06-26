@@ -118,17 +118,17 @@ class Features:
           word for word in self.non_stopwords if len(word) > 2 and word in self.d and self.nsyl(word) > 2 and self.word_freqs[word] < frequency_threshold
       }
 
-  def flesch_kincaid(self):# Flesch-Kincaid grade level
-      total_sentences = len(self.sentences)
-      total_words = len(self.words)
-      total_syllables = sum([self.nsyl(word) for word in self.words])
-
-
-      if total_words and total_sentences:
-          FK_grade = 0.39 * (total_words / total_sentences) + 11.8 * (total_syllables / total_words) - 15.59
-          return FK_grade
-      else:
-          return 0
+  def gunning_fog(self):# Gunning Fog index
+        total_sentences = len(self.sentences)
+        total_words = len(self.words)
+        complex_word_count = len(self.complex_words)
+        
+        
+        if total_words and total_sentences:
+            GF_index = 0.4 * ((total_words / total_sentences) + 100 * (complex_word_count / total_words))
+            return GF_index
+        else:
+            return 0
           
 url = 'https://raw.githubusercontent.com/Zeroflip64/Lessons_for_language/main/sub_all.csv'
 syb_all = pd.read_csv(url)
@@ -151,7 +151,7 @@ if document is not None:
     clean = Features(document)
     df=clean.sentences
     hard_words=clean.hard_words()    
-
+    st.write('Сложность вашего текста {clean.gunning_fog()}
 
     def empty_words(df):# Упражение 1
         type_of_words = {'глагол':'VERB', 'сущ':'NOUN', 'прил':'PRON'}
@@ -341,7 +341,7 @@ if document is not None:
     
         if st.button('Проверить ответ', key='check_answer_button_10'):
             result = compare_sentences(sentence, user_sentences,tokenizer, model)
-            st.write(f'Ваш текст совпал по смыслу на столько {np.round(result,1)} %')
+            st.write(f'Ваш текст совпал по смыслу на столько {np.round(result,1)*100} %')
     
     
     def split_of_sentences(df):
@@ -371,7 +371,7 @@ if document is not None:
             user_sentence = st.text_input('Введите ваше предложение', value=st.session_state.user_sentence,key='choosing')
     
             if st.button('Проверить предложение',key='button_of_ok'):
-                st.write(f"Предложения совпали c точностью {np.round(compare_sentences(sentence, user_sentence,tokenizer, model),1)}.")
+                st.write(f"Предложения совпали c точностью {np.round(compare_sentences(sentence, user_sentence,tokenizer, model),1)*100}.")
     
     st.header('Словарь')
     st.subheader('В вашем тексте есть сложные слова ,постарайтесь выучить их')
