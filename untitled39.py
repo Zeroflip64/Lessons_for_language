@@ -207,6 +207,8 @@ def empty_words(df):# Упражение 1
                 st.write(f'Вы ошиблись, верное слово {st.session_state.correct_word}')
 
 def sentenses_by_time(sentenses_list):  # Пропуски на правильное время глагола
+  nlp = spacy.load("en_core_web_sm")
+  
   if 'selected_sentence' not in st.session_state:
     st.session_state.selected_sentence = random.choice([sent for sent in sentenses_list if len(sent.split(' ')) > 5])
 
@@ -227,11 +229,12 @@ def sentenses_by_time(sentenses_list):  # Пропуски на правильн
     else:
       sen.append(token)
 
-  st.write(f"Выберите верное время глаголов в предложении   {' '.join([token if isinstance(token, str) else token.text for token in sen])}")
+  st.write(f"Выберите верное время глаголов в предложении   {' '.join([str(token) if isinstance(token, str) else token.text for token in sen])}")
 
   user_verbs = []
-  for idx, options in zip(verbs_indices, verb_options):
-    user_verbs.append(st.selectbox(f'Выберите время глагола для пропуска {idx+1}', options, key=f'verb{idx}'))
+  for idx, options in enumerate(verb_options):
+    user_verb = st.selectbox(f'Выберите время глагола для пропуска {idx+1}', options, key=f'verb{idx}')
+    user_verbs.append(user_verb)
 
   if st.button('Проверить выбор'):
     mistakes = 0
@@ -247,6 +250,8 @@ def sentenses_by_time(sentenses_list):  # Пропуски на правильн
     st.write(f'Количество ошибок {mistakes} из {len(user_verbs)} вариантов')
     if st.button('Новое предложение'):
       del st.session_state.selected_sentence
+      for idx in verbs_indices:
+        del st.session_state[f'verb{idx}']
     
 st.header('Упражнение 1')
 st.subheader('Упражнение где необходимо выбрать правильное слово подходящее по смыслу')
