@@ -365,8 +365,19 @@ def split_of_sentences(df):
 
         if st.button('Проверить предложение',key='button_of_ok'):
             st.write(f"Предложения совпали c точностью {np.round(compare_sentences(sentence, user_sentence,tokenizer, model),1)}.")
-            
+
 if uploaded_file is not None:
+    document = uploaded_file.read()
+
+
+    if isinstance(document, bytes):
+        document = document.decode('utf-8')
+
+    if isinstance(document, str):
+        clean = Features(document)
+    else:
+        st.error('The uploaded file could not be processed.')
+
     document = uploaded_file.read()
     clean=Features(document)
     df=clean.sentences
@@ -416,7 +427,8 @@ if uploaded_file is not None:
     st.text('Нажмите кнопку подтверждения')
     split_of_sentences(df)
     st.text('Если ваш результат выше 90% поздравляю')
-        
+else:
+    st.error('No file uploaded.')        
 
     
 
