@@ -292,6 +292,56 @@ def translate_book(word, purpose):#функция работы со словам
         else:
           st.write('Неверно, правильный ответ:', selected_word)
             
+def separate_by_meaning(sentence_list):
+
+    # Select a random sentence
+    if 'reset' not in st.session_state or st.session_state.reset:
+        st.session_state.selected_sentence = random.choice(sentence_list)
+        st.session_state.reset = False
+
+    sentence = st.session_state.selected_sentence
+
+    type_of_words = ['VERB', 'NOUN', 'PRON', 'ADJ']
+    names = []
+    new_sentences = []
+
+    # Преобразование предложения в нормальную форму и исправление орфографии
+    clean_sentences = nlp(' '.join([to_base_form(correct_spelling(i)).lower() for i in sentence.split(' ')]))
+
+    y = nlp(sentence)
+
+    for token in y:
+        if token.text.istitle() and token.text not in ['Little', 'Red', 'Cap']:
+            names.append(token.text.lower())
+
+    for i in clean_sentences:
+        try:
+            if i.pos_ in type_of_words and i.text not in names:
+                new_sentences.append(syb_all.loc[i.text][0])
+            else:
+                new_sentences.append(i.text)
+        except Exception as e:
+            st.write(f"An error occurred: {e}")
+            new_sentences.append(i.text)
+
+    st.write('Заменить руские слова на английские ')
+    new_sentences = ' '.join([token if isinstance(token, str) else token.text for token in new_sentences])
+    st.write(new_sentences)
+
+    user_sentences = st.text_input('Введите ваше предложение')
+
+    if st.button('Проверить ответ'):
+        result=ss.compare_sentences(sentence, user_sentences)
+
+        st.write('Ваш текст совпал по смыслу на столько %')
+        st.write(result)
+
+    if st.button('Новое предложение'):
+        st.session_state.reset = True
+
+
+
+
 st.header('Словарь')
 st.subheader('В вашем тексте есть сложные слова ,постарайтесь выучить их')
 
@@ -318,3 +368,7 @@ sentenses_by_time(df)
 st.header('Упражнение 3')
 st.subheader('Необходимо из букв составить слово')
 translate_book(hard_words,'exesises')
+
+
+st.header('Упражнение 4')
+separate_by_meaning(df)
