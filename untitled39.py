@@ -312,7 +312,7 @@ def separate_by_meaning(sentence_list):
     names = []
     new_sentences = []
 
-    if st.button('Выбрать предложение', key='new_sentence'):
+    if st.button('Выбрать предложение', key='new_sentence_10'):
         st.session_state.reset = True
 
     if 'reset' not in st.session_state or st.session_state.reset:
@@ -350,7 +350,7 @@ def separate_by_meaning(sentence_list):
 
     user_sentences = st.text_input('Введите ваше предложение')
 
-    if st.button('Проверить ответ', key='check_answer_button'):
+    if st.button('Проверить ответ', key='check_answer_button_10'):
         result = ss.compare_sentences(sentence, user_sentences)
         st.write('Ваш текст совпал по смыслу на столько %')
         st.write(result)
