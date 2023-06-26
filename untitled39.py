@@ -209,11 +209,15 @@ def empty_words(df):# Упражение 1
 def sentenses_by_time(sentenses_list):  # Пропуски на правильное время глагола
   if 'selected_sentence' not in st.session_state:
     st.session_state.selected_sentence = random.choice(sentenses_list)
+  
+  if 'mistakes' not in st.session_state:
+    st.session_state.mistakes = 0
+  if 'total_verbs' not in st.session_state:
+    st.session_state.total_verbs = 0
 
   doc = nlp(st.session_state.selected_sentence)
   sen = []
   verb = []
-  user_verbs = []
   verbs_indices = []
   verb_options = []
 
@@ -225,29 +229,30 @@ def sentenses_by_time(sentenses_list):  # Пропуски на правильн
       verb_options.append(verb_time(token.lemma_))
     else:
       sen.append(token)
-
+  
   st.write(f"Выберите верное время глаголов в предложении   {' '.join([token if isinstance(token, str) else token.text for token in sen])}")
 
   for idx, options in zip(verbs_indices, verb_options):
-    user_verbs.append(st.selectbox(f'Выберите время глагола для пропуска {idx+1}', options, key=f'verb{idx}'))
+    user_verb = st.selectbox(f'Выберите время глагола для пропуска {idx+1}', options, key=f'verb{idx}')
+    correct_verb = str(verb[idx])
+    if user_verb and user_verb != correct_verb:
+      st.write(f'Ошибка верное слово {correct_verb} для пропуска {idx+1}')
+      st.session_state.mistakes += 1
+    elif user_verb and user_verb == correct_verb:
+      st.write(f'Верно вы выбрали верное время для пропуска {idx+1}')
+    st.session_state.total_verbs += 1
 
-  if st.button('Проверить ответы'):
-    mistakes = 0
-    for idx, user_verb in zip(verbs_indices, user_verbs):
-      correct_verb = str(verb[idx])
-      if user_verb == correct_verb:
-        st.write(f'Верно вы выбрали верное время для пропуска {idx+1}')
-      else:
-        st.write(f'Ошибка верное слово {correct_verb} для пропуска {idx+1}')
-        mistakes += 1
-    if not mistakes:
-      st.write('Вы отлично справились')
-    else:
+  if st.button('Подсчитать ошибки'):
+    if st.session_state.mistakes:
       st.write('Попробуйте снова')
+    else:
+      st.write('Вы отлично справились')
 
-    st.write(f'Количество ошибок {mistakes} из {len(verb)} вариантов')
+    st.write(f'Количество ошибок {st.session_state.mistakes} из {st.session_state.total_verbs} вариантов')
     if st.button('Новое предложение'):
       del st.session_state.selected_sentence
+      st.session_state.mistakes = 0
+      st.session_state.total_verbs = 0
       for idx in verbs_indices:
         del st.session_state[f'verb{idx}']
     
