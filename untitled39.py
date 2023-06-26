@@ -147,6 +147,7 @@ else:
 
 clean=Features(document)
 df=clean.sentences
+hard_words=clean.hard_words
 
 
 
@@ -247,7 +248,63 @@ def sentenses_by_time(sentenses_list):  # Пропуски на правильн
       st.write('Вы отлично справились')
 
     st.write(f'Количество ошибок {mistakes} из {len(user_verbs)} вариантов')
-    
+
+def translate_book(words,purpose):#функция работы со словами
+
+  words=[]
+  translates=[]
+  for i in words:
+    try:
+
+      translates.append(syb_all.loc[i][0])
+      words.append(i)
+    except:
+      pass
+
+  if purpose=='translate_book':
+    help_words=pd.DataFrame({'ENG':words,'RUS':translates})
+
+    return help_words
+
+  elif purpose =='exesises':
+    book=dict(zip(words,translates))
+
+    if st.button('Выбрать новое слово'):
+        st.session_state.reset = True
+
+
+    if 'reset' not in st.session_state or st.session_state.reset:
+        st.session_state.selected_word = random.choice(list(book.keys()))
+        st.session_state.reset = False  # Reset the reset state
+
+
+    selected_word = st.session_state.selected_word
+    word_translation = book[selected_word]
+
+    # Create a shuffled version of the selected word
+    shuffled_word = list(selected_word)  
+    random.shuffle(shuffled_word)
+
+    st.write(f'Соберите слово {word_translation}')
+    st.write(f'Буквы {shuffled_word}')
+
+    # Get the user's answer
+    user_input = st.text_input('Ваш ответ')
+
+    # Check the user's answer
+    if user_input:
+        if user_input == selected_word:
+            st.write('Все верно')
+        else:
+            st.write('Неверно, правильный ответ:', selected_word)
+
+st.header('В вашем тексте есть сложные слова ,постарайтесь выучить их')
+st.subhead('Словарь')
+translate_book=translate_book(hard_words,'translate_book')
+st.write(translate_book)
+
+
+
 st.header('Упражнение 1')
 st.subheader('Упражнение где необходимо выбрать правильное слово подходящее по смыслу')
 st.text('1)Выберите часть речи')
@@ -257,7 +314,11 @@ st.text('4)Нажмите кнопку на проверку вашего сло
 empty_words(df)
 
 st.header('Упражнение 2')
-st.subheader('Упражение где необходимо выбрать правильное время у глагола изсходя из смысла предложения')
+st.subheader('Упражение где необходимо выбрать правильное время у глагола исходя из смысла предложения')
+st.text('Нажмите кпоку для выбора предложения')
+st.text('Выберите слова из списка')
+st.text('Нажмите кнопку и получите количество верных ответов')
 sentenses_by_time(df)
 
-
+st.header('Упражнение 3')
+translate_book(hard_words,'exesises')
