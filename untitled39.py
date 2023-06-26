@@ -250,12 +250,12 @@ def sentenses_by_time(sentenses_list):  # Пропуски на правильн
 
     st.write(f'Количество ошибок {mistakes} из {len(user_verbs)} вариантов')
 
-if st.button('Новое предложение'):
-  st.session_state.reset = True
-  for idx in range(len(verb_options)):  # Here we change from verbs_indices to verb_options, because its length will always match with the number of verbs we have
-    key = f'verb{idx}'
-    if key in st.session_state:  # Check if key exists
-      del st.session_state[key]
+  if st.button('Новое предложение'):
+      st.session_state.reset = True
+      for idx in range(len(verb_options)):  # Here we change from verbs_indices to verb_options, because its length will always match with the number of verbs we have
+        key = f'verb{idx}'
+        if key in st.session_state:  # Check if key exists
+          del st.session_state[key]
     
 st.header('Упражнение 1')
 st.subheader('Упражнение где необходимо выбрать правильное слово подходящее по смыслу')
