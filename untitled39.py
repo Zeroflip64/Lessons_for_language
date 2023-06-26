@@ -127,7 +127,7 @@ if uploaded_file is not None:
 
 clean=Features(document)
 df=clean.sentences
-
+st.write(df)
 def empty_words(df):
   type_of_words={'глагол':'VERB','сущ':'NOUN','прил':'PRON'}
   options = list(type_of_words.keys())
