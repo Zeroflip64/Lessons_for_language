@@ -369,65 +369,64 @@ def split_of_sentences(df):
 if uploaded_file is not None:
     document = uploaded_file.read()
 
-
     if isinstance(document, bytes):
-        document = document.decode('utf-8')
+        document = document.decode('utf-8')  # Decode bytes to string
 
     if isinstance(document, str):
         clean = Features(document)
     else:
         st.error('The uploaded file could not be processed.')
 
-document = uploaded_file.read()
-clean=Features(document)
-df=clean.sentences
-hard_words=clean.hard_words()
+    document = uploaded_file.read()
+    clean=Features(document)
+    df=clean.sentences
+    hard_words=clean.hard_words()
+        
+    st.header('Словарь')
+    st.subheader('В вашем тексте есть сложные слова ,постарайтесь выучить их')
     
-st.header('Словарь')
-st.subheader('В вашем тексте есть сложные слова ,постарайтесь выучить их')
-
-translate_b=translate_book(hard_words,'translate_book')
-st.write(translate_b)
-
-
-
-st.header('Упражнение 1')
-st.subheader('Упражнение где необходимо выбрать правильное слово подходящее по смыслу')
-st.text('1)Выберите часть речи')
-st.text('2)Нажмите кнопку по генерации предложения')
-st.text('3)Выберите слово и нажмите Enter')
-st.text('4)Нажмите кнопку на проверку вашего слова')
-empty_words(df)
-
-st.header('Упражнение 2')
-st.subheader('Упражение где необходимо выбрать правильное время у глагола исходя из смысла предложения')
-st.text('Нажмите кпоку для выбора предложения')
-st.text('Выберите слова из списка')
-st.text('Нажмите кнопку и получите количество верных ответов')
-sentenses_by_time(df)
-
-st.header('Упражнение 3')
-st.subheader('Необходимо из букв составить слово')
-translate_book(hard_words,'exesises')
-
-
-st.header('Упражнение 4')
-st.subheader('Дано предложение замените расские слова на английские и перепешите предложение')
-st.text('Нажмите кнопку получить предложение')
-st.text('Слова требующие перевода находяться в границах |_____|')
-st.text('Введите ваше предложение и нажмите Enter')
-st.text('Нажмите кнопку узнать результат')
-separate_by_meaning(df)
-st.text('Если ваш результат выше 85% то результат хороший поздравляем.')
-
-st.header('Упражнение 5')
-st.subheader('Необходимо из слов записать предложение')
-st.text('Нажмите кнопку получить предложение')
-st.text('Из полученных слов запишите предложение и нажмите Enter')
-st.text('Нажмите кнопку подтверждения')
-split_of_sentences(df)
-st.text('Если ваш результат выше 90% поздравляю')
- 
+    translate_b=translate_book(hard_words,'translate_book')
+    st.write(translate_b)
+    
+    
+    
+    st.header('Упражнение 1')
+    st.subheader('Упражнение где необходимо выбрать правильное слово подходящее по смыслу')
+    st.text('1)Выберите часть речи')
+    st.text('2)Нажмите кнопку по генерации предложения')
+    st.text('3)Выберите слово и нажмите Enter')
+    st.text('4)Нажмите кнопку на проверку вашего слова')
+    empty_words(df)
+    
+    st.header('Упражнение 2')
+    st.subheader('Упражение где необходимо выбрать правильное время у глагола исходя из смысла предложения')
+    st.text('Нажмите кпоку для выбора предложения')
+    st.text('Выберите слова из списка')
+    st.text('Нажмите кнопку и получите количество верных ответов')
+    sentenses_by_time(df)
+    
+    st.header('Упражнение 3')
+    st.subheader('Необходимо из букв составить слово')
+    translate_book(hard_words,'exesises')
+    
+    
+    st.header('Упражнение 4')
+    st.subheader('Дано предложение замените расские слова на английские и перепешите предложение')
+    st.text('Нажмите кнопку получить предложение')
+    st.text('Слова требующие перевода находяться в границах |_____|')
+    st.text('Введите ваше предложение и нажмите Enter')
+    st.text('Нажмите кнопку узнать результат')
+    separate_by_meaning(df)
+    st.text('Если ваш результат выше 85% то результат хороший поздравляем.')
+    
+    st.header('Упражнение 5')
+    st.subheader('Необходимо из слов записать предложение')
+    st.text('Нажмите кнопку получить предложение')
+    st.text('Из полученных слов запишите предложение и нажмите Enter')
+    st.text('Нажмите кнопку подтверждения')
+    split_of_sentences(df)
+    st.text('Если ваш результат выше 90% поздравляю')
+     
 
     
 
