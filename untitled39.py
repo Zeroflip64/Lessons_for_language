@@ -296,7 +296,7 @@ def translate_book(word, purpose):#функция работы со словам
 
     user_input = st.text_input('Ваш ответ')
 
-    if st.button('Проверить ответ', key='check_answer_button'):  # Add a button for checking the answer
+    if st.button('Проверить ответ', key='check_answer_button'):
       if user_input:
         if user_input == selected_word:
           st.write('Все верно')
@@ -304,6 +304,9 @@ def translate_book(word, purpose):#функция работы со словам
           st.write('Неверно, правильный ответ:', selected_word)
             
 def separate_by_meaning(sentence_list):
+
+    if st.button('Выбрать новое предложение', key='new_sentence_button'):
+        st.session_state.reset = True
 
     # Select a random sentence
     if 'reset' not in st.session_state or st.session_state.reset:
@@ -341,14 +344,10 @@ def separate_by_meaning(sentence_list):
 
     user_sentences = st.text_input('Введите ваше предложение')
 
-    if st.button('Проверить ответ'):
-        result=ss.compare_sentences(sentence, user_sentences)
-
+    if st.button('Проверить ответ', key='check_answer_button'):
+        result = ss.compare_sentences(sentence, user_sentences)
         st.write('Ваш текст совпал по смыслу на столько %')
         st.write(result)
-
-    if st.button('Новое предложение'):
-        st.session_state.reset = True
 
 
 
