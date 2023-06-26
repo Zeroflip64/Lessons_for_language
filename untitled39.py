@@ -100,16 +100,7 @@ class Features:
           return 0
 
 
-@st.cache_data()
-def load_fill_mask_pipeline():
-    return pipeline(
-        "fill-mask",
-        model="distilbert-base-multilingual-cased",
-        tokenizer="distilbert-base-multilingual-cased"
-    )
 
-
-fill_mask = load_fill_mask_pipeline()
 url = 'https://raw.githubusercontent.com/Zeroflip64/Lessons_for_language/main/sub_all.csv'
 syb_all = pd.read_csv(url)
 
