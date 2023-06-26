@@ -118,7 +118,7 @@ class Features:
           word for word in self.non_stopwords if len(word) > 2 and word in self.d and self.nsyl(word) > 2 and self.word_freqs[word] < frequency_threshold
       }
 
-  def gunning_fog(self):# Gunning Fog index
+  def gunning_fog(self):
         total_sentences = len(self.sentences)
         total_words = len(self.words)
         complex_word_count = len(self.complex_words)
@@ -151,7 +151,7 @@ if document is not None:
     clean = Features(document)
     df=clean.sentences
     hard_words=clean.hard_words()    
-    st.write(f'Сложность вашего текста {clean.gunning_fog()}')
+    #st.write(f'Сложность вашего текста {clean.gunning_fog()}')
 
     def empty_words(df):# Упражение 1
         type_of_words = {'глагол':'VERB', 'сущ':'NOUN', 'прил':'PRON'}
