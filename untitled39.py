@@ -139,7 +139,7 @@ clean=Features(document)
 df=clean.sentences
 st.write(df)
 
-def empty_words(df, nlp, fill_mask):
+def empty_words(df):
     type_of_words = {'глагол':'VERB', 'сущ':'NOUN', 'прил':'PRON'}
 
     tape = st.selectbox('Выбирите тип слова', ('глагол', 'сущ', 'прил'))
