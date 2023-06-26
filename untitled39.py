@@ -188,10 +188,11 @@ def empty_words(df):
 
     user_guess = st.text_input("Your Guess:")
 
-    if user_guess:
-        if user_guess == st.session_state.correct_word:
-            st.write('Поздравляем вы выбрали верное слово')
-        else:
-            st.write(f'Вы ошиблись, верное слово {st.session_state.correct_word}')
+    if st.button("Check Answer"):
+        if user_guess:
+            if user_guess == st.session_state.correct_word:
+                st.write('Поздравляем вы выбрали верное слово')
+            else:
+                st.write(f'Вы ошиблись, верное слово {st.session_state.correct_word}')
 
 empty_words(df)
