@@ -321,7 +321,7 @@ def separate_by_meaning(sentence_list):
             st.session_state.selected_sentence = random.choice(df)
             if len(st.session_state.selected_sentence.split()) > 4:
                 break
-        st.session_state.reset = False  # Reset the reset state
+        st.session_state.reset = False  
 
     sentence = st.session_state.selected_sentence
 
@@ -356,31 +356,27 @@ def separate_by_meaning(sentence_list):
 
 
 def split_of_sentences(df):
-    if 'reset' not in st.session_state or st.session_state.reset:
-        st.session_state.update({"selected_words": []})
-        st.session_state.update({"reset": False})
-        st.session_state.update({"sentence": ""})
-        st.session_state.update({"user_sentence": ""})
+    if st.button('Получить предложение', key='new_sentence_10'):
+        st.session_state.reset = True
 
-    # Button to select a new sentence
-    if st.button('Выбрать случайное предложение'):
+    if 'reset' not in st.session_state or st.session_state.reset:
+        # Select a sentence with more than 4 words
         while True:
-            sentence = random.choice(df)
-            s_sentences = sentence.split(' ')
-            if 2 <= len(s_sentences) <= 8:
-                st.session_state.update({"sentence": sentence})
-                random.shuffle(s_sentences)
-                st.session_state.update({"selected_words": s_sentences})
+            st.session_state.selected_sentence = random.choice(df)
+            if 2<len(st.session_state.selected_sentence.split())>8 :
                 break
+        st.session_state.reset = False  
+
+    sentence = st.session_state.selected_sentence
 
     if 'sentence' in st.session_state and st.session_state.sentence:
         
         st.write(f'Составьте предложение из следующих слов: {st.session_state.selected_words}')
 
-        st.session_state.user_sentence = st.text_input("Введите предложение", value=st.session_state.user_sentence)
+        user_sentences = st.text_input('Введите ваше предложение',value=st.session_state.user_sentence)
 
         if st.button('Проверить предложение'):
-            st.write(f"Предложения совпали c точностью {compare_sentences(sentence, st.session_state.user_sentence,tokenizer, model)}.")
+            st.write(f"Предложения совпали c точностью {sentence, user_sentences,tokenizer, model)}.")
 
     
 st.header('Словарь')
