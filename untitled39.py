@@ -145,43 +145,39 @@ def empty_words(df):
     word_type = type_of_words.get(tape)
 
     if word_type is not None:
-        # Select random sentence until one meets criteria
         while True:
             sentence = random.choice(df)
             text = nlp(sentence)
             if word_type in [i.pos_ for i in text] and len(text.text) > 10:
                 break
 
-        # Select a random index of the chosen word type in the sentence
         indices = [i for i, token in enumerate(text) if token.pos_ == word_type]
         random_index = random.choice(indices)
 
-        # Create a sentence with a blank
         tokens = [token.text for token in text]
         correct_word = tokens[random_index]
         tokens[random_index] = '[MASK]'
         sentence_with_blank = ' '.join(tokens)
 
-        # Get prediction variants
         predictions = fill_mask(sentence_with_blank, top_k=4)
         variants = [pred['token_str'] for pred in predictions if pred['token_str'] != correct_word]
 
-        if len(variants) < 4:  # If not enough variants, add the correct word
+        if len(variants) < 4: 
             variants.append(correct_word)
 
-        # Shuffle the variants so the correct word is not always last
         random.shuffle(variants)
 
         st.write(f"Выбери верное слово в предложении {sentence_with_blank.replace('[MASK]', '_________')}")
         st.write(f'Варианты слов {variants}')
 
-        user_guess = st.text_input("Your Guess: ")
+        while True:
+            user_guess = st.text_input("Your Guess: ")
 
-        if user_guess == correct_word:
-            st.write('Поздравляем вы выбрали верное слово')
-        else:
-            st.write(f'Вы ошиблись, верное слово {correct_word}')
-
+            if user_guess == correct_word:
+                st.write('Поздравляем вы выбрали верное слово')
+                break
+            else:
+                st.write(f'Вы ошиблись, попробуйте еще раз.')
     else:
         st.write("Please select a valid word type.")
 
