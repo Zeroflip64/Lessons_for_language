@@ -356,15 +356,15 @@ def separate_by_meaning(sentence_list):
 
 def split_of_sentences(df):
     
-    # Initialize session state variables
+
     if 'reset' not in st.session_state or st.session_state.reset:
         st.session_state.selected_words = []
         st.session_state.remaining_words = []
         st.session_state.reset = False
         st.session_state.sentence = ""
 
-    # Button to select a new sentence
-    if st.button('Выбрать случайное предложение',key='select_sentenses_11'):
+
+    if st.button('Выбрать случайное предложение'):
         while True:
             sentence = random.choice(df)
             s_sentences = sentence.split(' ')
@@ -374,7 +374,7 @@ def split_of_sentences(df):
                 st.session_state.remaining_words = s_sentences
                 break
 
-    if st.session_state.sentence:
+    if 'sentence' in st.session_state and st.session_state.sentence:
         st.write(f'Выбранное предложение: {st.session_state.sentence}')
         st.write(f'Составьте предложение из следующих слов: {st.session_state.remaining_words}')
 
@@ -389,7 +389,7 @@ def split_of_sentences(df):
                 # Display the current state of the user's sentence
                 st.write(f'Ваше предложение: {" ".join(st.session_state.selected_words)}')
 
-        if st.button('Проверить предложение',key='check_the_sentenses'):
+        if st.button('Проверить предложение'):
             user_sentence = " ".join(st.session_state.selected_words)
             original_bigrams = list(ngrams(st.session_state.sentence.split(), 2))
             user_bigrams = list(ngrams(user_sentence.split(), 2))
