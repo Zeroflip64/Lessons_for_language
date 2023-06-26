@@ -64,6 +64,11 @@ def verb_time(words):  # Функция времени глагола
     for inflection in inflections:
         timed_words.append(inflection)
   return timed_words
+@st.cache_data()
+def to_base_form(word):# выводит в начальную форму слова
+    token = nlp(word)[0]
+    base_form = token.lemma_
+    return base_form
     
 @st.cache_resource
 def load_fill_mask_pipeline():
