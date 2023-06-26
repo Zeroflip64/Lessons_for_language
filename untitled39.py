@@ -379,11 +379,13 @@ def split_of_sentences(df):
         st.write(f'Выбранное предложение: {st.session_state.sentence}')
         st.write(f'Составьте предложение из следующих слов: {st.session_state.remaining_words}')
 
-        for word, selected in st.session_state.words_dict.items():
-            if not selected: 
-                if st.button(word, key=word): 
-                    st.session_state.words_dict[word] = True
-                    st.session_state.selected_words.append(word)
+        if 'words_dict' in st.session_state:  # Check if words_dict has been initialized
+            for word, selected in st.session_state.words_dict.items():
+                if not selected:  # Only show buttons for words that haven't been selected yet
+                    if st.button(word, key=word):  # Create button for each word
+                        st.session_state.words_dict[word] = True
+                        st.session_state.selected_words.append(word)
+
 
         st.write(f'Ваше предложение: {" ".join(st.session_state.selected_words)}')
 
@@ -392,7 +394,7 @@ def split_of_sentences(df):
             original_bigrams = list(ngrams(st.session_state.sentence.split(), 2))
             user_bigrams = list(ngrams(user_sentence.split(), 2))
 
-  
+
             if set(user_bigrams).issubset(set(original_bigrams)):
                 st.write("Предложения совпали поздравляю.")
             else:
