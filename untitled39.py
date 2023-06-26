@@ -64,6 +64,7 @@ def verb_time(words):  # Функция времени глагола
     for inflection in inflections:
         timed_words.append(inflection)
   return timed_words
+    
 @st.cache_data()
 def correct_spelling(word):
     spell = SpellChecker(language='en')
@@ -72,6 +73,8 @@ def correct_spelling(word):
     
 @st.cache_data()
 def to_base_form(word):# выводит в начальную форму слова
+    if word is None:
+        return None
     token = nlp(word)[0]
     base_form = token.lemma_
     return base_form
@@ -305,19 +308,22 @@ def translate_book(word, purpose):#функция работы со словам
             
 def separate_by_meaning(sentence_list):
 
-    if st.button('Выбрать новое предложение', key='new_sentence_button'):
-        st.session_state.reset = True
-
-    # Select a random sentence
-    if 'reset' not in st.session_state or st.session_state.reset:
-        st.session_state.selected_sentence = random.choice(sentence_list)
-        st.session_state.reset = False
-
-    sentence = st.session_state.selected_sentence
-
     type_of_words = ['VERB', 'NOUN', 'PRON', 'ADJ']
     names = []
     new_sentences = []
+
+    if st.button('Выбрать предложение', key='new_sentence'):
+        st.session_state.reset = True
+
+    if 'reset' not in st.session_state or st.session_state.reset:
+        # Select a sentence with more than 4 words
+        while True:
+            st.session_state.selected_sentence = random.choice(df)
+            if len(st.session_state.selected_sentence.split()) > 4:
+                break
+        st.session_state.reset = False  # Reset the reset state
+
+    sentence = st.session_state.selected_sentence
 
     # Преобразование предложения в нормальную форму и исправление орфографии
     clean_sentences = nlp(' '.join([to_base_form(correct_spelling(i)).lower() for i in sentence.split(' ')]))
