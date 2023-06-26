@@ -208,7 +208,7 @@ def empty_words(df):# Упражение 1
 
 def sentenses_by_time(sentenses_list):  # Пропуски на правильное время глагола
   if 'selected_sentence' not in st.session_state:
-    st.session_state.selected_sentence = random.choice(sentenses_list)
+    st.session_state.selected_sentence = random.choice([sent for sent in sentenses_list if len(sent.split(' ')) > 5])
   
   if 'mistakes' not in st.session_state:
     st.session_state.mistakes = 0
