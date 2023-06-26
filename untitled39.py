@@ -153,7 +153,7 @@ def empty_words(df):
     if "variants" not in st.session_state:
         st.session_state.variants = []
 
-    if st.button("Generate new sentence"):
+    if st.button("Сгенерировать новое предложение ? "):
         word_type = type_of_words[tape]
         sentence = None
 
@@ -186,13 +186,19 @@ def empty_words(df):
     st.write(f"Выбери верное слово в предложении {st.session_state.sentence_with_blank}")
     st.write(f'Варианты слов {st.session_state.variants}')
 
-    user_guess = st.text_input("Your Guess:")
+    user_guess = st.text_input("Ваш ответ:")
 
-    if st.button("Check Answer"):
+    if st.button("Проверить ответ? "):
         if user_guess:
             if user_guess == st.session_state.correct_word:
                 st.write('Поздравляем вы выбрали верное слово')
             else:
                 st.write(f'Вы ошиблись, верное слово {st.session_state.correct_word}')
-
+                
+st.header('Упражнение 1')
+st.subheader('Упражнение где необходимо выбрать правильное слово подходящее по смыслу')
+st.text('1)Выберите часть речи')
+st.text('2)Нажмите кнопку по генерации предложения')
+st.text('3)Выберите слово и нажмите Enter')
+st.text('4)Нажмите кнопку на проверку вашего слова')
 empty_words(df)
