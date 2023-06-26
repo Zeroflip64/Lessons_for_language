@@ -120,7 +120,7 @@ class Features:
 
 url = 'https://raw.githubusercontent.com/Zeroflip64/Lessons_for_language/main/sub_all.csv'
 syb_all = pd.read_csv(url)
-
+syb_all=syb_all.set_index('EN',drop=True)
   
 tokenizer, model = init_model()
 fill_mask = load_fill_mask_pipeline()
@@ -148,7 +148,7 @@ else:
 clean=Features(document)
 df=clean.sentences
 hard_words=clean.hard_words()
-st.text(syb_all)
+
 
 
 def empty_words(df):# Упражение 1
@@ -281,17 +281,17 @@ def translate_book(word,purpose):#функция работы со словам�
     selected_word = st.session_state.selected_word
     word_translation = book[selected_word]
 
-    # Create a shuffled version of the selected word
+
     shuffled_word = list(selected_word)  
     random.shuffle(shuffled_word)
 
     st.write(f'Соберите слово {word_translation}')
     st.write(f'Буквы {shuffled_word}')
 
-    # Get the user's answer
+
     user_input = st.text_input('Ваш ответ')
 
-    # Check the user's answer
+
     if user_input:
         if user_input == selected_word:
             st.write('Все верно')
