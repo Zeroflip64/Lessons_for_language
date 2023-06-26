@@ -137,9 +137,8 @@ syb_all=syb_all.set_index('EN',drop=True)
 tokenizer, model = init_model()
 fill_mask = load_fill_mask_pipeline()
 
-document=None
-uploaded_file = st.file_uploader("Загрузите ваш документ", type=["txt"])
-
+document = None
+uploaded_file = st.file_uploader("Загрузите ваш документ", type=["txt"])  
 
 if uploaded_file is not None:
     document = uploaded_file.read()
@@ -148,289 +147,275 @@ if uploaded_file is not None:
     if isinstance(document, bytes):
         document = document.decode('utf-8')
 
-    if isinstance(document, str):
-        clean = Features(document)
-    else:
-        st.error('The uploaded file could not be processed.')
-else:
-    st.error('No file uploaded.')
+if document is not None:
+    clean = Features(document)
+    df=clean.sentences
+    hard_words=clean.hard_words()    
 
 
-
-clean=Features(document)
-df=clean.sentences
-hard_words=clean.hard_words()
-
-
-
-
-
-
-
-
-def empty_words(df):# Упражение 1
-    type_of_words = {'глагол':'VERB', 'сущ':'NOUN', 'прил':'PRON'}
-
-    tape = st.selectbox('Выбирите тип слова', ('глагол', 'сущ', 'прил'))
-
-    if "correct_word" not in st.session_state:
-        st.session_state.correct_word = ""
-        
-    if "sentence_with_blank" not in st.session_state:
-        st.session_state.sentence_with_blank = ""
-        
-    if "variants" not in st.session_state:
-        st.session_state.variants = []
-
-    if st.button("Сгенерировать новое предложение."):
-        word_type = type_of_words[tape]
-        sentence = None
-
-        while True:
-            sentence = random.choice(df)
-            text = nlp(sentence)
-
-            if word_type in {i.pos_ for i in text} and len(text.text) > 10:
-                break
-
-        indices = [i for i, token in enumerate(text) if token.pos_ == word_type]
-        random_index = random.choice(indices)
-
-        tokens = [token.text for token in text]
-        st.session_state.correct_word = tokens[random_index]
-        tokens[random_index] = '[MASK]'
-        sentence_with_blank = ' '.join(tokens)
-
-        predictions = fill_mask(sentence_with_blank, top_k=4)
-        variants = set(pred['token_str'] for pred in predictions if pred['token_str'] != st.session_state.correct_word)
-
-        if len(variants) < 4: 
-            variants.add(st.session_state.correct_word)
-
-        st.session_state.variants = list(variants)
-        random.shuffle(st.session_state.variants)
-
-        st.session_state.sentence_with_blank = sentence_with_blank.replace('[MASK]', '_________')
-
-    st.write(f"Выбери верное слово в предложении {st.session_state.sentence_with_blank}")
-    st.write(f'Варианты слов {st.session_state.variants}')
-
-    user_guess = st.text_input("Ваш ответ:")
-
-    if st.button("Проверить ответ"):
-        if user_guess:
-            if user_guess == st.session_state.correct_word:
-                st.write('Поздравляем вы выбрали верное слово')
-            else:
-                st.write(f'Вы ошиблись, верное слово {st.session_state.correct_word}')
-
-def sentenses_by_time(sentenses_list):  # Пропуски на правильное время глагола
-
-  if st.button('Выбрать новое предложение') or 'selected_sentence' not in st.session_state:
-    st.session_state.selected_sentence = random.choice([sent for sent in sentenses_list if len(sent.split(' ')) > 5])
-  
-  doc = nlp(st.session_state.selected_sentence)
-  sen = []
-  verbs_indices = []
-  verb_options = []
-  correct_verbs = []
-
-  for token in doc:
-    if token.pos_ == 'VERB':
-      sen.append('_______')
-      verbs_indices.append(len(sen) - 1)
-      options = verb_time(token.lemma_)
-      options.append(str(token))  # Add the original verb to options
-      verb_options.append(options)
-      correct_verbs.append(str(token))
-    else:
-      sen.append(token)
-
-  st.write(f"Выберите верное время глаголов в предложении   {' '.join([str(token) if isinstance(token, str) else token.text for token in sen])}")
-
-  user_verbs = []
-  for idx, options in enumerate(verb_options):
-    user_verb = st.selectbox(f'Выберите время глагола для пропуска {idx+1}', options, key=f'verb{idx}')
-    user_verbs.append(user_verb)
-
-  if st.button('Проверить выбор'):
-    mistakes = 0
-    for idx, (user_verb, correct_verb) in enumerate(zip(user_verbs, correct_verbs)):
-      if user_verb != correct_verb:
-        st.write(f'Ошибка верное слово {correct_verb} для пропуска {idx+1}')
-        mistakes += 1
-    if mistakes:
-      st.write('Попробуйте снова')
-    else:
-      st.write('Вы отлично справились')
-
-    st.write(f'Количество ошибок {mistakes} из {len(user_verbs)} вариантов')
-
-def translate_book(word, purpose):#функция работы со словами
-
-  words = []
-  translates = []
-  
-  for i in word:
-    try:
-      translates.append(syb_all.loc[i][0])
-      words.append(i)
-    except:
-      pass
-
-  if purpose=='translate_book':
-    help_words = pd.DataFrame({'ENG':words,'RUS':translates})
-    return help_words
-  elif purpose == 'exesises':
-    book = dict(zip(words, translates))
-
-    if st.button('Выбрать новое слово', key='new_word_button'):
-      st.session_state.reset = True
-
-    if 'reset' not in st.session_state or st.session_state.reset:
-      st.session_state.selected_word = random.choice(list(book.keys()))
-      st.session_state.reset = False 
-
-    selected_word = st.session_state.selected_word
-    word_translation = book[selected_word]
-
-    shuffled_word = list(selected_word)  
-    random.shuffle(shuffled_word)
-
-    st.write(f'Соберите слово {word_translation}')
-    st.write(f'Буквы {shuffled_word}')
-
-    user_input = st.text_input('Ваш ответ')
-
-    if st.button('Проверить ответ', key='check_answer_button'):
-      if user_input:
-        if user_input == selected_word:
-          st.write('Все верно')
-        else:
-          st.write('Неверно, правильный ответ:', selected_word)
+    def empty_words(df):# Упражение 1
+        type_of_words = {'глагол':'VERB', 'сущ':'NOUN', 'прил':'PRON'}
+    
+        tape = st.selectbox('Выбирите тип слова', ('глагол', 'сущ', 'прил'))
+    
+        if "correct_word" not in st.session_state:
+            st.session_state.correct_word = ""
             
-def separate_by_meaning(sentence_list):
-
-    type_of_words = ['VERB', 'NOUN', 'PRON', 'ADJ']
-    names = []
-    new_sentences = []
-
-    if st.button('Получить предложение', key='new_sentence_10'):
-        st.session_state.reset = True
-
-    if 'reset' not in st.session_state or st.session_state.reset:
-
-        while True:
-            st.session_state.selected_sentence = random.choice(df)
-            if len(st.session_state.selected_sentence.split()) > 4:
-                break
-        st.session_state.reset = False  
-
-    sentence = st.session_state.selected_sentence
-
-    # Преобразование предложения в нормальную форму и исправление орфографии
-    clean_sentences = nlp(' '.join([to_base_form(correct_spelling(i)).lower() if to_base_form(correct_spelling(i)) is not None else '' for i in sentence.split(' ')]))
-
-    y = nlp(sentence)
-
-    for token in y:
-        if token.text.istitle() and token.text not in ['Little', 'Red', 'Cap']:
-            names.append(token.text.lower())
-
-    for i in clean_sentences:
+        if "sentence_with_blank" not in st.session_state:
+            st.session_state.sentence_with_blank = ""
+            
+        if "variants" not in st.session_state:
+            st.session_state.variants = []
+    
+        if st.button("Сгенерировать новое предложение."):
+            word_type = type_of_words[tape]
+            sentence = None
+    
+            while True:
+                sentence = random.choice(df)
+                text = nlp(sentence)
+    
+                if word_type in {i.pos_ for i in text} and len(text.text) > 10:
+                    break
+    
+            indices = [i for i, token in enumerate(text) if token.pos_ == word_type]
+            random_index = random.choice(indices)
+    
+            tokens = [token.text for token in text]
+            st.session_state.correct_word = tokens[random_index]
+            tokens[random_index] = '[MASK]'
+            sentence_with_blank = ' '.join(tokens)
+    
+            predictions = fill_mask(sentence_with_blank, top_k=4)
+            variants = set(pred['token_str'] for pred in predictions if pred['token_str'] != st.session_state.correct_word)
+    
+            if len(variants) < 4: 
+                variants.add(st.session_state.correct_word)
+    
+            st.session_state.variants = list(variants)
+            random.shuffle(st.session_state.variants)
+    
+            st.session_state.sentence_with_blank = sentence_with_blank.replace('[MASK]', '_________')
+    
+        st.write(f"Выбери верное слово в предложении {st.session_state.sentence_with_blank}")
+        st.write(f'Варианты слов {st.session_state.variants}')
+    
+        user_guess = st.text_input("Ваш ответ:")
+    
+        if st.button("Проверить ответ"):
+            if user_guess:
+                if user_guess == st.session_state.correct_word:
+                    st.write('Поздравляем вы выбрали верное слово')
+                else:
+                    st.write(f'Вы ошиблись, верное слово {st.session_state.correct_word}')
+    
+    def sentenses_by_time(sentenses_list):  # Пропуски на правильное время глагола
+    
+      if st.button('Выбрать новое предложение') or 'selected_sentence' not in st.session_state:
+        st.session_state.selected_sentence = random.choice([sent for sent in sentenses_list if len(sent.split(' ')) > 5])
+      
+      doc = nlp(st.session_state.selected_sentence)
+      sen = []
+      verbs_indices = []
+      verb_options = []
+      correct_verbs = []
+    
+      for token in doc:
+        if token.pos_ == 'VERB':
+          sen.append('_______')
+          verbs_indices.append(len(sen) - 1)
+          options = verb_time(token.lemma_)
+          options.append(str(token))  # Add the original verb to options
+          verb_options.append(options)
+          correct_verbs.append(str(token))
+        else:
+          sen.append(token)
+    
+      st.write(f"Выберите верное время глаголов в предложении   {' '.join([str(token) if isinstance(token, str) else token.text for token in sen])}")
+    
+      user_verbs = []
+      for idx, options in enumerate(verb_options):
+        user_verb = st.selectbox(f'Выберите время глагола для пропуска {idx+1}', options, key=f'verb{idx}')
+        user_verbs.append(user_verb)
+    
+      if st.button('Проверить выбор'):
+        mistakes = 0
+        for idx, (user_verb, correct_verb) in enumerate(zip(user_verbs, correct_verbs)):
+          if user_verb != correct_verb:
+            st.write(f'Ошибка верное слово {correct_verb} для пропуска {idx+1}')
+            mistakes += 1
+        if mistakes:
+          st.write('Попробуйте снова')
+        else:
+          st.write('Вы отлично справились')
+    
+        st.write(f'Количество ошибок {mistakes} из {len(user_verbs)} вариантов')
+    
+    def translate_book(word, purpose):#функция работы со словами
+    
+      words = []
+      translates = []
+      
+      for i in word:
         try:
-            if i.pos_ in type_of_words and i.text not in names:
-                new_sentences.append(syb_all.loc[i.text][0])
+          translates.append(syb_all.loc[i][0])
+          words.append(i)
+        except:
+          pass
+    
+      if purpose=='translate_book':
+        help_words = pd.DataFrame({'ENG':words,'RUS':translates})
+        return help_words
+      elif purpose == 'exesises':
+        book = dict(zip(words, translates))
+    
+        if st.button('Выбрать новое слово', key='new_word_button'):
+          st.session_state.reset = True
+    
+        if 'reset' not in st.session_state or st.session_state.reset:
+          st.session_state.selected_word = random.choice(list(book.keys()))
+          st.session_state.reset = False 
+    
+        selected_word = st.session_state.selected_word
+        word_translation = book[selected_word]
+    
+        shuffled_word = list(selected_word)  
+        random.shuffle(shuffled_word)
+    
+        st.write(f'Соберите слово {word_translation}')
+        st.write(f'Буквы {shuffled_word}')
+    
+        user_input = st.text_input('Ваш ответ')
+    
+        if st.button('Проверить ответ', key='check_answer_button'):
+          if user_input:
+            if user_input == selected_word:
+              st.write('Все верно')
             else:
+              st.write('Неверно, правильный ответ:', selected_word)
+                
+    def separate_by_meaning(sentence_list):
+    
+        type_of_words = ['VERB', 'NOUN', 'PRON', 'ADJ']
+        names = []
+        new_sentences = []
+    
+        if st.button('Получить предложение', key='new_sentence_10'):
+            st.session_state.reset = True
+    
+        if 'reset' not in st.session_state or st.session_state.reset:
+    
+            while True:
+                st.session_state.selected_sentence = random.choice(df)
+                if len(st.session_state.selected_sentence.split()) > 4:
+                    break
+            st.session_state.reset = False  
+    
+        sentence = st.session_state.selected_sentence
+    
+        # Преобразование предложения в нормальную форму и исправление орфографии
+        clean_sentences = nlp(' '.join([to_base_form(correct_spelling(i)).lower() if to_base_form(correct_spelling(i)) is not None else '' for i in sentence.split(' ')]))
+    
+        y = nlp(sentence)
+    
+        for token in y:
+            if token.text.istitle() and token.text not in ['Little', 'Red', 'Cap']:
+                names.append(token.text.lower())
+    
+        for i in clean_sentences:
+            try:
+                if i.pos_ in type_of_words and i.text not in names:
+                    new_sentences.append(syb_all.loc[i.text][0])
+                else:
+                    new_sentences.append(i.text)
+            except Exception as e:
+                st.write(f"An error occurred: {e}")
                 new_sentences.append(i.text)
-        except Exception as e:
-            st.write(f"An error occurred: {e}")
-            new_sentences.append(i.text)
-
-    st.write('Заменить руские слова на английские ')
-    new_sentences = ' '.join([token if isinstance(token, str) else token.text for token in new_sentences])
-    st.write(new_sentences)
-
-    user_sentences = st.text_input('Введите ваше предложение')
-
-    if st.button('Проверить ответ', key='check_answer_button_10'):
-        result = compare_sentences(sentence, user_sentences,tokenizer, model)
-        st.write(f'Ваш текст совпал по смыслу на столько {np.round(result,1)} %')
-
-
-def split_of_sentences(df):
-    if st.button('Получить предложение', key='new_sentence_15'):
-        st.session_state.reset = True
-
-    if 'reset' not in st.session_state or st.session_state.reset:
-
-        while True:
-            st.session_state.selected_sentence = random.choice(df)
-            words = st.session_state.selected_sentence.split()
-            if 2 < len(words) < 8:
-                break
-        st.session_state.reset = False  
-
-    sentence = st.session_state.selected_sentence
-
-    if 'selected_sentence' in st.session_state and st.session_state.selected_sentence:
-
-        words = sentence.split()
-        random.shuffle(words)
-        st.session_state.selected_words = words
-        st.session_state.user_sentence = ""
-
-        st.write(f'Составьте предложение из следующих слов: {st.session_state.selected_words}')
-
-        user_sentence = st.text_input('Введите ваше предложение', value=st.session_state.user_sentence,key='choosing')
-
-        if st.button('Проверить предложение',key='button_of_ok'):
-            st.write(f"Предложения совпали c точностью {np.round(compare_sentences(sentence, user_sentence,tokenizer, model),1)}.")
-
-st.header('Словарь')
-st.subheader('В вашем тексте есть сложные слова ,постарайтесь выучить их')
-
-translate_b=translate_book(hard_words,'translate_book')
-st.write(translate_b)
-
-
-
-st.header('Упражнение 1')
-st.subheader('Упражнение где необходимо выбрать правильное слово подходящее по смыслу')
-st.text('1)Выберите часть речи')
-st.text('2)Нажмите кнопку по генерации предложения')
-st.text('3)Выберите слово и нажмите Enter')
-st.text('4)Нажмите кнопку на проверку вашего слова')
-empty_words(df)
-
-st.header('Упражнение 2')
-st.subheader('Упражение где необходимо выбрать правильное время у глагола исходя из смысла предложения')
-st.text('Нажмите кпоку для выбора предложения')
-st.text('Выберите слова из списка')
-st.text('Нажмите кнопку и получите количество верных ответов')
-sentenses_by_time(df)
-
-st.header('Упражнение 3')
-st.subheader('Необходимо из букв составить слово')
-translate_book(hard_words,'exesises')
-
-
-st.header('Упражнение 4')
-st.subheader('Дано предложение замените расские слова на английские и перепешите предложение')
-st.text('Нажмите кнопку получить предложение')
-st.text('Слова требующие перевода находяться в границах |_____|')
-st.text('Введите ваше предложение и нажмите Enter')
-st.text('Нажмите кнопку узнать результат')
-separate_by_meaning(df)
-st.text('Если ваш результат выше 85% то результат хороший поздравляем.')
-
-st.header('Упражнение 5')
-st.subheader('Необходимо из слов записать предложение')
-st.text('Нажмите кнопку получить предложение')
-st.text('Из полученных слов запишите предложение и нажмите Enter')
-st.text('Нажмите кнопку подтверждения')
-split_of_sentences(df)
-st.text('Если ваш результат выше 90% поздравляю')
+    
+        st.write('Заменить руские слова на английские ')
+        new_sentences = ' '.join([token if isinstance(token, str) else token.text for token in new_sentences])
+        st.write(new_sentences)
+    
+        user_sentences = st.text_input('Введите ваше предложение')
+    
+        if st.button('Проверить ответ', key='check_answer_button_10'):
+            result = compare_sentences(sentence, user_sentences,tokenizer, model)
+            st.write(f'Ваш текст совпал по смыслу на столько {np.round(result,1)} %')
+    
+    
+    def split_of_sentences(df):
+        if st.button('Получить предложение', key='new_sentence_15'):
+            st.session_state.reset = True
+    
+        if 'reset' not in st.session_state or st.session_state.reset:
+    
+            while True:
+                st.session_state.selected_sentence = random.choice(df)
+                words = st.session_state.selected_sentence.split()
+                if 2 < len(words) < 8:
+                    break
+            st.session_state.reset = False  
+    
+        sentence = st.session_state.selected_sentence
+    
+        if 'selected_sentence' in st.session_state and st.session_state.selected_sentence:
+    
+            words = sentence.split()
+            random.shuffle(words)
+            st.session_state.selected_words = words
+            st.session_state.user_sentence = ""
+    
+            st.write(f'Составьте предложение из следующих слов: {st.session_state.selected_words}')
+    
+            user_sentence = st.text_input('Введите ваше предложение', value=st.session_state.user_sentence,key='choosing')
+    
+            if st.button('Проверить предложение',key='button_of_ok'):
+                st.write(f"Предложения совпали c точностью {np.round(compare_sentences(sentence, user_sentence,tokenizer, model),1)}.")
+    
+    st.header('Словарь')
+    st.subheader('В вашем тексте есть сложные слова ,постарайтесь выучить их')
+    
+    translate_b=translate_book(hard_words,'translate_book')
+    st.write(translate_b)
+    
+    
+    
+    st.header('Упражнение 1')
+    st.subheader('Упражнение где необходимо выбрать правильное слово подходящее по смыслу')
+    st.text('1)Выберите часть речи')
+    st.text('2)Нажмите кнопку по генерации предложения')
+    st.text('3)Выберите слово и нажмите Enter')
+    st.text('4)Нажмите кнопку на проверку вашего слова')
+    empty_words(df)
+    
+    st.header('Упражнение 2')
+    st.subheader('Упражение где необходимо выбрать правильное время у глагола исходя из смысла предложения')
+    st.text('Нажмите кпоку для выбора предложения')
+    st.text('Выберите слова из списка')
+    st.text('Нажмите кнопку и получите количество верных ответов')
+    sentenses_by_time(df)
+    
+    st.header('Упражнение 3')
+    st.subheader('Необходимо из букв составить слово')
+    translate_book(hard_words,'exesises')
+    
+    
+    st.header('Упражнение 4')
+    st.subheader('Дано предложение замените расские слова на английские и перепешите предложение')
+    st.text('Нажмите кнопку получить предложение')
+    st.text('Слова требующие перевода находяться в границах |_____|')
+    st.text('Введите ваше предложение и нажмите Enter')
+    st.text('Нажмите кнопку узнать результат')
+    separate_by_meaning(df)
+    st.text('Если ваш результат выше 85% то результат хороший поздравляем.')
+    
+    st.header('Упражнение 5')
+    st.subheader('Необходимо из слов записать предложение')
+    st.text('Нажмите кнопку получить предложение')
+    st.text('Из полученных слов запишите предложение и нажмите Enter')
+    st.text('Нажмите кнопку подтверждения')
+    split_of_sentences(df)
+    st.text('Если ваш результат выше 90% поздравляю')
      
 
     
