@@ -354,12 +354,13 @@ def separate_by_meaning(sentence_list):
         result = compare_sentences(sentence, user_sentences,tokenizer, model)
         st.write(f'Ваш текст совпал по смыслу на столько {np.round(result,1)} %')
 
+
 def split_of_sentences(df):
     if 'reset' not in st.session_state or st.session_state.reset:
         st.session_state.update({"selected_words": []})
-        st.session_state.update({"remaining_words": []})
         st.session_state.update({"reset": False})
         st.session_state.update({"sentence": ""})
+        st.session_state.update({"user_sentence": ""})
 
     # Button to select a new sentence
     if st.button('Выбрать случайное предложение'):
@@ -369,33 +370,19 @@ def split_of_sentences(df):
             if 2 <= len(s_sentences) <= 8:
                 st.session_state.update({"sentence": sentence})
                 random.shuffle(s_sentences)
-                st.session_state.update({"remaining_words": s_sentences})
+                st.session_state.update({"selected_words": s_sentences})
                 break
 
     if 'sentence' in st.session_state and st.session_state.sentence:
-        st.write(f'Выбранное предложение: {st.session_state.sentence}')
-        st.write(f'Составьте предложение из следующих слов: {st.session_state.remaining_words}')
+        
+        st.write(f'Составьте предложение из следующих слов: {st.session_state.selected_words}')
 
-        if st.session_state.remaining_words:
-            selected_word = st.selectbox("Выберите слово", options=st.session_state.remaining_words, key='word_selection')
-            if st.button("Add word"):
-                st.session_state.selected_words.append(selected_word)
-                st.session_state.remaining_words.remove(selected_word)
-
-        # Display the current state of the user's sentence
-        st.write(f'Ваше предложение: {" ".join(st.session_state.selected_words)}')
+        st.session_state.user_sentence = st.text_input("Введите предложение", value=st.session_state.user_sentence)
 
         if st.button('Проверить предложение'):
-            user_sentence = " ".join(st.session_state.selected_words)
-            original_bigrams = list(ngrams(st.session_state.sentence.split(), 2))
-            user_bigrams = list(ngrams(user_sentence.split(), 2))
+            st.write(f"Предложения совпали c точностью {compare_sentences(sentence, st.session_state.user_sentence,tokenizer, model)}.")
 
-            # Compare bigrams
-            if set(user_bigrams).issubset(set(original_bigrams)):
-                st.write("Предложения совпали поздравляю.")
-            else:
-                st.write("Ошибка.")
-
+    
 st.header('Словарь')
 st.subheader('В вашем тексте есть сложные слова ,постарайтесь выучить их')
 
