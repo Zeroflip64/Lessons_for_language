@@ -360,23 +360,29 @@ def split_of_sentences(df):
         st.session_state.reset = True
 
     if 'reset' not in st.session_state or st.session_state.reset:
-        # Select a sentence with more than 4 words
+
         while True:
             st.session_state.selected_sentence = random.choice(df)
-            if 2<len(st.session_state.selected_sentence.split())>8 :
+            words = st.session_state.selected_sentence.split()
+            if 2 < len(words) < 8:
                 break
         st.session_state.reset = False  
 
     sentence = st.session_state.selected_sentence
 
-    if 'sentence' in st.session_state and st.session_state.sentence:
-        
+    if 'selected_sentence' in st.session_state and st.session_state.selected_sentence:
+        # Shuffling words and setting user sentence state
+        words = sentence.split()
+        random.shuffle(words)
+        st.session_state.selected_words = words
+        st.session_state.user_sentence = ""
+
         st.write(f'Составьте предложение из следующих слов: {st.session_state.selected_words}')
 
-        user_sentences = st.text_input('Введите ваше предложение',value=st.session_state.user_sentence)
+        user_sentence = st.text_input('Введите ваше предложение', value=st.session_state.user_sentence)
 
         if st.button('Проверить предложение'):
-            st.write(f"Предложения совпали c точностью {compare_sentences(sentence, user_sentences,tokenizer, model)}.")
+            st.write(f"Предложения совпали c точностью {compare_sentences(sentence, user_sentence,tokenizer, model)}.")
 
     
 st.header('Словарь')
