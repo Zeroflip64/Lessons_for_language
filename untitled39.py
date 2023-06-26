@@ -171,7 +171,7 @@ if document is not None:
             word_type = type_of_words[tape]
             sentence = None
     
-                while True:
+            while True:
                     sentence = random.choice(df)
                     text = nlp(sentence)
             
