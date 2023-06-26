@@ -137,8 +137,9 @@ else:
 
 clean=Features(document)
 df=clean.sentences
-st.write(df)
 
+
+@st.cache_data()
 def empty_words(df):
     type_of_words = {'глагол':'VERB', 'сущ':'NOUN', 'прил':'PRON'}
 
@@ -153,7 +154,7 @@ def empty_words(df):
     if "variants" not in st.session_state:
         st.session_state.variants = []
 
-    if st.button("Сгенерировать новое предложение ? "):
+    if st.button("Сгенерировать новое предложение."):
         word_type = type_of_words[tape]
         sentence = None
 
@@ -188,7 +189,7 @@ def empty_words(df):
 
     user_guess = st.text_input("Ваш ответ:")
 
-    if st.button("Проверить ответ? "):
+    if st.button("Проверить ответ"):
         if user_guess:
             if user_guess == st.session_state.correct_word:
                 st.write('Поздравляем вы выбрали верное слово')
