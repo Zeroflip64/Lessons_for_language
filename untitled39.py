@@ -249,38 +249,30 @@ def sentenses_by_time(sentenses_list):  # Пропуски на правильн
 
     st.write(f'Количество ошибок {mistakes} из {len(user_verbs)} вариантов')
 
-def translate_book(word,purpose):#функция работы со словами
+def translate_book(word, purpose):#функция работы со словами
 
-  words=[]
-  translates=[]
+  words = []
+  translates = []
+  
   for i in word:
     try:
-
       translates.append(syb_all.loc[i][0])
       words.append(i)
     except:
       pass
 
   if purpose=='translate_book':
-    help_words=pd.DataFrame({'ENG':words,'RUS':translates})
-
+    help_words = pd.DataFrame({'ENG':words,'RUS':translates})
     return help_words
 
   elif purpose =='exesises':
     book=dict(zip(words,translates))
 
     if st.button('Выбрать новое слово'):
-        st.session_state.reset = True
-
-
-    if 'reset' not in st.session_state or st.session_state.reset:
         st.session_state.selected_word = random.choice(list(book.keys()))
-        st.session_state.reset = False  # Reset the reset state
-
 
     selected_word = st.session_state.selected_word
     word_translation = book[selected_word]
-
 
     shuffled_word = list(selected_word)  
     random.shuffle(shuffled_word)
@@ -288,9 +280,7 @@ def translate_book(word,purpose):#функция работы со словам�
     st.write(f'Соберите слово {word_translation}')
     st.write(f'Буквы {shuffled_word}')
 
-
     user_input = st.text_input('Ваш ответ')
-
 
     if user_input:
         if user_input == selected_word:
