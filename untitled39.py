@@ -100,7 +100,7 @@ class Features:
           return 0
 
 
-@st.cache_data(allow_output_mutation=True)
+@st.cache_data()
 def load_fill_mask_pipeline():
     return pipeline(
         "fill-mask",
