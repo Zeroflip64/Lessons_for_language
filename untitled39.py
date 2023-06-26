@@ -264,11 +264,15 @@ def translate_book(word, purpose):#функция работы со словам
   if purpose=='translate_book':
     help_words = pd.DataFrame({'ENG':words,'RUS':translates})
     return help_words
-  else:
-    book=dict(zip(words,translates))
-    st.write(book)
+  elif purpose == 'exesises':
+    book = dict(zip(words, translates))
+
     if st.button('Выбрать новое слово'):
-        st.session_state.selected_word = random.choice(list(book.keys()))
+      st.session_state.reset = True
+
+    if 'reset' not in st.session_state or st.session_state.reset:
+      st.session_state.selected_word = random.choice(list(book.keys()))
+      st.session_state.reset = False  # Reset the reset state
 
     selected_word = st.session_state.selected_word
     word_translation = book[selected_word]
@@ -281,11 +285,12 @@ def translate_book(word, purpose):#функция работы со словам
 
     user_input = st.text_input('Ваш ответ')
 
-    if user_input:
+    if st.button('Проверить ответ'):  # Add a button for checking the answer
+      if user_input:
         if user_input == selected_word:
-            st.write('Все верно')
+          st.write('Все верно')
         else:
-            st.write('Неверно, правильный ответ:', selected_word)
+          st.write('Неверно, правильный ответ:', selected_word)
             
 st.header('Словарь')
 st.subheader('В вашем тексте есть сложные слова ,постарайтесь выучить их')
@@ -311,4 +316,5 @@ st.text('Нажмите кнопку и получите количество в
 sentenses_by_time(df)
 
 st.header('Упражнение 3')
+st.subheader('Необходимо из букв составить слово')
 translate_book(hard_words,'exesises')
