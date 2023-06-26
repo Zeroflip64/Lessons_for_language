@@ -207,11 +207,11 @@ def empty_words(df):# Упражение 1
                 st.write(f'Вы ошиблись, верное слово {st.session_state.correct_word}')
 
 def sentenses_by_time(sentenses_list):  # Пропуски на правильное время глагола
-  nlp = spacy.load("en_core_web_sm")
-  
-  if 'new_sentence' not in st.session_state or st.session_state.new_sentence:
+
+  # Перезапуск
+  if 'reset' not in st.session_state or st.session_state.reset:
     st.session_state.selected_sentence = random.choice([sent for sent in sentenses_list if len(sent.split(' ')) > 5])
-    st.session_state.new_sentence = False
+    st.session_state.reset = False
 
   doc = nlp(st.session_state.selected_sentence)
   sen = []
@@ -241,7 +241,7 @@ def sentenses_by_time(sentenses_list):  # Пропуски на правильн
     mistakes = 0
     for idx, (user_verb, correct_verb) in enumerate(zip(user_verbs, correct_verbs)):
       if user_verb != correct_verb:
-
+        st.write(f'Ошибка верное слово {correct_verb} для пропуска {idx+1}')
         mistakes += 1
     if mistakes:
       st.write('Попробуйте снова')
@@ -251,7 +251,7 @@ def sentenses_by_time(sentenses_list):  # Пропуски на правильн
     st.write(f'Количество ошибок {mistakes} из {len(user_verbs)} вариантов')
 
   if st.button('Новое предложение'):
-    st.session_state.new_sentence = True
+    st.session_state.reset = True
     for idx in verbs_indices:
       del st.session_state[f'verb{idx}']
     
