@@ -172,32 +172,28 @@ if document is not None:
             sentence = None
     
             while True:
-                    sentence = random.choice(df)
-                    text = nlp(sentence)
-            
-                    if word_type in {i.pos_ for i in text} and len(text.text) > 10:
-                        break
+                sentence = random.choice(df)
+                text = nlp(sentence)
     
-        indices = [i for i, token in enumerate(text) if token.pos_ == word_type]
-        random_index = random.choice(indices)
+                if word_type in {i.pos_ for i in text} and len(text.text) > 10:
+                    break
     
-        tokens = [token.text for token in text]
-        st.session_state.correct_word = tokens[random_index]
-        tokens[random_index] = '[MASK]'
-        sentence_with_blank = ' '.join(tokens)
+            indices = [i for i, token in enumerate(text) if token.pos_ == word_type]
+            random_index = random.choice(indices)
     
-        predictions = fill_mask(sentence_with_blank, top_k=4)
-        variants = set(pred['token_str'] for pred in predictions)
+            tokens = [token.text for token in text]
+            st.session_state.correct_word = tokens[random_index]
+            tokens[random_index] = '[MASK]'
+            sentence_with_blank = ' '.join(tokens)
     
-        # add the correct answer to the variants
-        variants.add(st.session_state.correct_word)
+            predictions = fill_mask(sentence_with_blank, top_k=4)
+            variants = set(pred['token_str'] for pred in predictions)
     
-        # if there are more than 4 words, remove extra words
-        while len(variants) > 4:
-            variants.remove(random.choice(list(variants)))
+            # Ensure the correct answer is always an option
+            variants.add(st.session_state.correct_word)
     
-        st.session_state.variants = list(variants)
-        random.shuffle(st.session_state.variants)
+            st.session_state.variants = list(variants)
+            random.shuffle(st.session_state.variants)
     
             st.session_state.sentence_with_blank = sentence_with_blank.replace('[MASK]', '_________')
     
@@ -211,7 +207,8 @@ if document is not None:
                 if user_guess == st.session_state.correct_word:
                     st.write('Поздравляем вы выбрали верное слово')
                 else:
-                    st.write(f'Вы ошиблись, верное слово {st.session_state.correct_word}')
+                    st.write(f'Вы ошиблись, верное слово {st.session_state.correct_word}') 
+
     
     def sentenses_by_time(sentenses_list):  # Пропуски на правильное время глагола
     
