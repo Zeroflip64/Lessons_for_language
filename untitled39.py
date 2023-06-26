@@ -366,7 +366,7 @@ def split_of_sentences(df):
 
     if st.button('Выбрать случайное предложение',key='random_senteses'):
         while True:
-            sentence = random.choice(df[)
+            sentence = random.choice(df)
             s_sentences = sentence.split(' ')
             if 2 <= len(s_sentences) <= 8:
                 st.session_state.sentence = sentence
