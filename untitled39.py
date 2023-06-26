@@ -100,12 +100,16 @@ class Features:
           return 0
 
 
+@st.cache_data(allow_output_mutation=True)
+def load_fill_mask_pipeline():
+    return pipeline(
+        "fill-mask",
+        model="distilbert-base-multilingual-cased",
+        tokenizer="distilbert-base-multilingual-cased"
+    )
 
-fill_mask = pipeline(
-  "fill-mask",
-  model="distilbert-base-multilingual-cased",
-  tokenizer="distilbert-base-multilingual-cased"
-)
+
+fill_mask = load_fill_mask_pipeline()
 url = 'https://raw.githubusercontent.com/Zeroflip64/Lessons_for_language/main/sub_all.csv'
 syb_all = pd.read_csv(url)
 
@@ -126,7 +130,9 @@ df=clean.sentences
 
 def empty_words(df):
   type_of_words={'глагол':'VERB','сущ':'NOUN','прил':'PRON'}
-  tape=st.text_input('Выбирите тип слова и впешити ("глагол", "сущ" , "прил") ')
+  options = list(type_of_words.keys())
+  tape = st.selectbox('Выбирите тип слова и впешити (глагол , сущ , прил)', options)
+
   text=None
   count=0
 
