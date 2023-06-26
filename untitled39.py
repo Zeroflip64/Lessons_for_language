@@ -267,7 +267,7 @@ def translate_book(word, purpose):#функция работы со словам
   elif purpose == 'exesises':
     book = dict(zip(words, translates))
 
-    if st.button('Выбрать новое слово'):
+    if st.button('Выбрать новое слово', key='new_word_button'):
       st.session_state.reset = True
 
     if 'reset' not in st.session_state or st.session_state.reset:
@@ -285,7 +285,7 @@ def translate_book(word, purpose):#функция работы со словам
 
     user_input = st.text_input('Ваш ответ')
 
-    if st.button('Проверить ответ'):  # Add a button for checking the answer
+    if st.button('Проверить ответ', key='check_answer_button'):  # Add a button for checking the answer
       if user_input:
         if user_input == selected_word:
           st.write('Все верно')
