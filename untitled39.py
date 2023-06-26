@@ -55,7 +55,14 @@ def compare_sentences(sentence1, sentence2, tokenizer, model):
     similarity = 1 - cosine(vec1, vec2)
     return similarity
 
-
+@st.cache_data()
+def load_fill_mask_pipeline():
+    model=pipeline(
+        "fill-mask",
+        model="distilbert-base-multilingual-cased",
+        tokenizer="distilbert-base-multilingual-cased")
+    return model
+    
 class Features:
   d = cmudict.dict()
   word_freqs = FreqDist(i.lower() for i in reuters.words())
@@ -106,7 +113,7 @@ syb_all = pd.read_csv(url)
 
   
 tokenizer, model = init_model()
-
+fill_mask = load_fill_mask_pipeline()
 
 document=None
 uploaded_file = st.file_uploader("Загрузите ваш документ", type=["txt"])
