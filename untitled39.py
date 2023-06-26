@@ -351,7 +351,7 @@ def separate_by_meaning(sentence_list):
     user_sentences = st.text_input('Введите ваше предложение')
 
     if st.button('Проверить ответ', key='check_answer_button_10'):
-        result = ss.compare_sentences(sentence, user_sentences)
+        result = compare_sentences(sentence, user_sentences,tokenizer, model)
         st.write('Ваш текст совпал по смыслу на столько %')
         st.write(result)
 
