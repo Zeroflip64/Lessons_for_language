@@ -54,7 +54,17 @@ def compare_sentences(sentence1, sentence2, tokenizer, model):
     vec2 = sentence_to_vec(sentence2, tokenizer, model)
     similarity = 1 - cosine(vec1, vec2)
     return similarity
-
+    
+@st.cache_date()
+def verb_time(words):  # Функция времени глагола
+  inflection_tags = ['VBD', 'VBZ', 'VBG']
+  timed_words = []
+  for tag in inflection_tags:
+    inflections = getInflection(words, tag=tag)
+    for inflection in inflections:
+        timed_words.append(inflection)
+  return timed_words
+    
 @st.cache_resource
 def load_fill_mask_pipeline():
     return pipeline(
@@ -139,8 +149,8 @@ clean=Features(document)
 df=clean.sentences
 
 
-@st.cache_data()
-def empty_words(df):
+
+def empty_words(df):# Упражение 1
     type_of_words = {'глагол':'VERB', 'сущ':'NOUN', 'прил':'PRON'}
 
     tape = st.selectbox('Выбирите тип слова', ('глагол', 'сущ', 'прил'))
@@ -195,7 +205,46 @@ def empty_words(df):
                 st.write('Поздравляем вы выбрали верное слово')
             else:
                 st.write(f'Вы ошиблись, верное слово {st.session_state.correct_word}')
-                
+
+def sentenses_by_time(sentenses_list):  # Пропуски на правильное время глагола Упражение 2
+  if 'selected_sentence' not in st.session_state:
+    st.session_state.selected_sentence = random.choice(sentenses_list)
+
+  doc = nlp(st.session_state.selected_sentence)
+  sen = []
+  verb = []
+  mistakes = 0
+  
+  for token in doc:
+    if token.pos_ == 'VERB':
+      sen.append(str(verb_time(token.lemma_)))
+      verb.append(str(token))
+    else:
+      sen.append(token)
+
+  st.write(f"Выберите верное время глаголов в предложении   {' '.join([token if isinstance(token, str) else token.text for token in sen])}")
+  count = 0
+  
+  for idx, word in enumerate(sen):
+    if len(word) > 20:
+      if 'user_verb_time' not in st.session_state or st.session_state.user_verb_time == idx:
+        user_word = st.text_input(f'Выберите {word}')
+        if user_word:
+          st.session_state.user_verb_time = idx + 1
+          sen[idx] = user_word
+          if user_word == verb[count]:
+            st.write('Верно вы выбрали верное время')
+          else:
+            st.write(f'Ошибка верное слово {verb[count]}')
+            mistakes += 1
+          count += 1
+  if not mistakes or (count / len(verb)) <= mistakes:
+    st.write('Вы отлично справились')
+  else:
+    st.write('Попробуйте снова')
+
+  st.write(f'Количество ошибок {mistakes} из {count} вариантов')
+    
 st.header('Упражнение 1')
 st.subheader('Упражнение где необходимо выбрать правильное слово подходящее по смыслу')
 st.text('1)Выберите часть речи')
@@ -203,3 +252,9 @@ st.text('2)Нажмите кнопку по генерации предложе�
 st.text('3)Выберите слово и нажмите Enter')
 st.text('4)Нажмите кнопку на проверку вашего слова')
 empty_words(df)
+
+st.header('Упражнение 2')
+st.subheader('Упражение где необходимо выбрать правильное время у глагола изсходя из смысла предложения')
+sentenses_by_time(df)
+
+
