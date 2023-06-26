@@ -355,34 +355,35 @@ def separate_by_meaning(sentence_list):
         st.write(f'Ваш текст совпал по смыслу на столько {np.round(result,1)} %')
 
 def split_of_sentences(df):
-    
 
     if 'reset' not in st.session_state or st.session_state.reset:
         st.session_state.selected_words = []
         st.session_state.remaining_words = []
         st.session_state.reset = False
         st.session_state.sentence = ""
+        st.session_state.words_dict = {}
 
 
-    if st.button('Выбрать случайное предложение',key='random_senteses'):
+    if st.button('Выбрать случайное предложение'):
         while True:
-            sentence = random.choice(df)
+            sentence = random.choice(df['text'])
             s_sentences = sentence.split(' ')
             if 2 <= len(s_sentences) <= 8:
                 st.session_state.sentence = sentence
                 random.shuffle(s_sentences)
-                st.session_state.remaining_words = s_sentences
+                st.session_state.remaining_words = s_sentences.copy()
+                st.session_state.words_dict = {word: False for word in s_sentences}
                 break
 
     if 'sentence' in st.session_state and st.session_state.sentence:
-
+        st.write(f'Выбранное предложение: {st.session_state.sentence}')
         st.write(f'Составьте предложение из следующих слов: {st.session_state.remaining_words}')
 
-        for word in st.session_state.remaining_words:
-            if st.button(word, key=word):  
-                st.session_state.remaining_words.remove(word)
-                st.session_state.selected_words.append(word)
-
+        for word, selected in st.session_state.words_dict.items():
+            if not selected: 
+                if st.button(word, key=word): 
+                    st.session_state.words_dict[word] = True
+                    st.session_state.selected_words.append(word)
 
         st.write(f'Ваше предложение: {" ".join(st.session_state.selected_words)}')
 
@@ -391,7 +392,7 @@ def split_of_sentences(df):
             original_bigrams = list(ngrams(st.session_state.sentence.split(), 2))
             user_bigrams = list(ngrams(user_sentence.split(), 2))
 
-
+  
             if set(user_bigrams).issubset(set(original_bigrams)):
                 st.write("Предложения совпали поздравляю.")
             else:
