@@ -148,7 +148,7 @@ else:
 clean=Features(document)
 df=clean.sentences
 hard_words=clean.hard_words
-
+st.write(hard_words)
 
 
 def empty_words(df):# Упражение 1
@@ -301,7 +301,7 @@ def translate_book(words,purpose):#функция работы со словам
 st.header('Словарь')
 st.subheader('В вашем тексте есть сложные слова ,постарайтесь выучить их')
 
-translate_book=translate_book(hard_words,'translate_book')
+translate_book=translate_book(clean.hard_words,'translate_book')
 st.write(translate_book)
 
 
