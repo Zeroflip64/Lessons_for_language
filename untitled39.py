@@ -249,11 +249,11 @@ def sentenses_by_time(sentenses_list):  # Пропуски на правильн
 
     st.write(f'Количество ошибок {mistakes} из {len(user_verbs)} вариантов')
 
-def translate_book(words,purpose):#функция работы со словами
+def translate_book(word,purpose):#функция работы со словами
 
   words=[]
   translates=[]
-  for i in words:
+  for i in word:
     try:
 
       translates.append(syb_all.loc[i][0])
