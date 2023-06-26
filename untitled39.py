@@ -65,6 +65,12 @@ def verb_time(words):  # Функция времени глагола
         timed_words.append(inflection)
   return timed_words
 @st.cache_data()
+def correct_spelling(word):
+    spell = SpellChecker(language='en')
+    corrected_word = spell.correction(word)
+    return corrected_word
+    
+@st.cache_data()
 def to_base_form(word):# выводит в начальную форму слова
     token = nlp(word)[0]
     base_form = token.lemma_
