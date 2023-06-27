@@ -48,7 +48,7 @@ def init_model(model_name='distilbert-base-uncased'):
     model = DistilBertForMaskedLM.from_pretrained(model_name)
     return tokenizer, model
     
-@st.cache_data()
+
 def sentence_to_vec(sentence, tokenizer, model):
     inputs = tokenizer(sentence, return_tensors="pt")
     with torch.no_grad(): 
