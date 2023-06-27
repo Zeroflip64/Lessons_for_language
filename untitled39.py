@@ -84,7 +84,7 @@ def to_base_form(word):# выводит в начальную форму сло�
     base_form = token.lemma_
     return base_form
     
-@st.cache_resource()
+@st.cache_data()
 def load_fill_mask_pipeline(tokenizer, model):
     return pipeline(
         "fill-mask",
