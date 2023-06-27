@@ -85,12 +85,16 @@ def to_base_form(word):# выводит в начальную форму сло�
     return base_form
     
 
-def load_fill_mask_pipeline(tokenizer, model):
-    return pipeline(
-        "fill-mask",
-        model=model,
-        tokenizer=tokenizer
-    )
+@st.cache_data()
+def predict_masked_word(sentence, tokenizer, model):
+    inputs = tokenizer(sentence, return_tensors="pt")
+    mask_token_index = torch.where(inputs["input_ids"][0] == tokenizer.mask_token_id)[0]
+    outputs = model(**inputs)
+    logits = outputs.last_hidden_state[0, mask_token_index, :]
+    probs = logits.softmax(dim=1)
+    top_3 = probs.topk(3)
+    predictions = [{'token_str': tokenizer.convert_ids_to_tokens(top_3.indices[i].item())} for i in range(3)]
+    return predictions
 
 
 
@@ -147,7 +151,7 @@ syb_all = data()
 syb_all=syb_all.set_index('EN',drop=True)
 
 tokenizer, model = init_model()
-fill_mask = load_fill_mask_pipeline(tokenizer,model)
+
 
 document = None
 uploaded_file = st.file_uploader("Загрузите ваш документ", type=["txt"])  
@@ -198,7 +202,7 @@ if document is not None:
             tokens[random_index] = '[MASK]'
             sentence_with_blank = ' '.join(tokens)
     
-            predictions = fill_mask(sentence_with_blank, top_k=3)
+            predictions = predict_masked_word(sentence_with_blank, tokenizer, model)
             variants = set(pred['token_str'] for pred in predictions)
     
             
@@ -219,7 +223,7 @@ if document is not None:
                 if user_guess == st.session_state.correct_word:
                     st.write('Поздравляем вы выбрали верное слово')
                 else:
-                    st.write(f'Вы ошиблись, верное слово {st.session_state.correct_word}') 
+                    st.write(f'Вы ошиблись, верное слово {st.session_state.correct_word}')
 
     
     def sentenses_by_time(sentenses_list):  # Пропуски на правильное время глагола
