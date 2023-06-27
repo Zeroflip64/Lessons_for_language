@@ -42,12 +42,13 @@ def load_spacy_model(model_name):
 nlp=load_spacy_model('en_core_web_sm')
 
 
-@st.cache_data(ttl='1h')
+@st.cache_resource(ttl='1h')
 def init_model(model_name='distilbert-base-uncased'):
     tokenizer = DistilBertTokenizer.from_pretrained(model_name)
     model = DistilBertModel.from_pretrained(model_name)
     return tokenizer, model
-
+    
+@st.cache_data(ttl='1h')
 def sentence_to_vec(sentence, tokenizer, model):
     inputs = tokenizer(sentence, return_tensors="pt")
     outputs = model(**inputs)
@@ -83,12 +84,12 @@ def to_base_form(word):# выводит в начальную форму сло�
     base_form = token.lemma_
     return base_form
     
-@st.cache_data(ttl='1h')
-def load_fill_mask_pipeline():
+@st.cache_resource(ttl='1h')
+def load_fill_mask_pipeline(tokenizer, model):
     return pipeline(
         "fill-mask",
-        model="distilbert-base-multilingual-cased",
-        tokenizer="distilbert-base-multilingual-cased"
+        model=model,
+        tokenizer=tokenizer
     )
 
 
@@ -192,10 +193,10 @@ if document is not None:
             tokens[random_index] = '[MASK]'
             sentence_with_blank = ' '.join(tokens)
     
-            predictions = fill_mask(sentence_with_blank, top_k=4)
+            predictions = fill_mask(sentence_with_blank, top_k=3)
             variants = set(pred['token_str'] for pred in predictions)
     
-            # Ensure the correct answer is always an option
+            
             variants.add(st.session_state.correct_word)
     
             st.session_state.variants = list(variants)
