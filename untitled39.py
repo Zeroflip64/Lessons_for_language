@@ -152,34 +152,6 @@ def data():
 syb_all = data()
 syb_all=syb_all.set_index('EN',drop=True)
 
-def translater_help(lang,data):
-    if lang=='eng':
-        word=st.text_input('Введите ваше слово')
-        try:
-            return data.loc[word][0]
-        except:
-            st.text('К сожалению такого слова не найденно')
-    else:
-        rus_word=st.text_input('Введите слово как в упражнении,пример |ваше слово| ')
-        try:
-            return data.query('RUS == @rus_word').index[0]
-        except:
-            st.text('К сожалению такого слова не найденно')
-    
-    
-lang_choice = st.sidebar.selectbox(
-"Выберите язык",
-("eng", "rus")
-)
-
-with st.sidebar:
-    result = translater_help(lang_choice, syb_all)
-
-if not result.empty:
-    st.write(f'Результат: {result}')
-
-
-
 
 
 tokenizer, model = init_model()
