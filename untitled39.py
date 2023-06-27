@@ -156,7 +156,7 @@ def translater_help(lang,data):
     if lang=='eng':
         word=st.text_input('Введите ваше слово')
         try:
-            return data.loc[word]
+            return data.loc[word][0]
         except:
             st.text('К сожалению такого слова не найденно')
     else:
