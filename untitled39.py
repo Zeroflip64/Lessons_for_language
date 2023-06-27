@@ -94,7 +94,7 @@ def predict_masked_word(sentence, tokenizer, model):
     logits = outputs.logits[0, mask_token_index, :]
     probs = logits.softmax(dim=1)
     top_3 = probs.topk(3)
-    predictions = [{'token_str': tokenizer.convert_ids_to_tokens(top_3.indices[i].item())} for i in range(3)]
+    predictions = [{'token_str': tokenizer.convert_ids_to_tokens(top_3.indices[i].item().tolist())} for i in range(3)]
     return predictions
 
 
