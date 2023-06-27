@@ -42,7 +42,7 @@ def load_spacy_model(model_name):
 nlp=load_spacy_model('en_core_web_sm')
 
 
-@st.cache_resource(ttl='1h')
+@st.cache_data(ttl='1h')
 def init_model(model_name='distilbert-base-uncased'):
     tokenizer = DistilBertTokenizer.from_pretrained(model_name)
     model = DistilBertModel.from_pretrained(model_name)
@@ -83,7 +83,7 @@ def to_base_form(word):# выводит в начальную форму сло�
     base_form = token.lemma_
     return base_form
     
-@st.cache_resource(ttl='1h')
+@st.cache_data(ttl='1h')
 def load_fill_mask_pipeline():
     return pipeline(
         "fill-mask",
