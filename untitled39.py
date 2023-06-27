@@ -175,7 +175,7 @@ lang_choice = st.sidebar.selectbox(
 with st.sidebar:
     result = translater_help(lang_choice, syb_all)
 
-if result:
+if not result.empty:
     st.write(f'Результат: {result}')
 
 
