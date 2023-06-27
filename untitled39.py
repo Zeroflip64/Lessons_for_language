@@ -38,7 +38,7 @@ import streamlit as st
 nlp=spacy.load('en_core_web_sm')
 
 
-@st.cache_resource
+@st.cache_resource(ttl='1h')
 def init_model(model_name='distilbert-base-uncased'):
     tokenizer = DistilBertTokenizer.from_pretrained(model_name)
     model = DistilBertModel.from_pretrained(model_name)
@@ -55,7 +55,7 @@ def compare_sentences(sentence1, sentence2, tokenizer, model):
     similarity = 1 - cosine(vec1, vec2)
     return similarity
     
-@st.cache_data()
+@st.cache_data(ttl='1h')
 def verb_time(words):  # Функция времени глагола
   inflection_tags = ['VBD', 'VBZ', 'VBG']
   timed_words = []
@@ -65,13 +65,13 @@ def verb_time(words):  # Функция времени глагола
         timed_words.append(inflection)
   return timed_words
     
-@st.cache_data()
+@st.cache_data(ttl='1h')
 def correct_spelling(word):
     spell = SpellChecker(language='en')
     corrected_word = spell.correction(word)
     return corrected_word
     
-@st.cache_data()
+@st.cache_data(ttl='1h')
 def to_base_form(word):# выводит в начальную форму слова
     if word is None:
         return None
@@ -79,7 +79,7 @@ def to_base_form(word):# выводит в начальную форму сло�
     base_form = token.lemma_
     return base_form
     
-@st.cache_resource
+@st.cache_resource(ttl='1h')
 def load_fill_mask_pipeline():
     return pipeline(
         "fill-mask",
