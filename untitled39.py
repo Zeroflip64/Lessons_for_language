@@ -42,13 +42,13 @@ def load_spacy_model(model_name):
 nlp=load_spacy_model('en_core_web_sm')
 
 
-@st.cache_resource(ttl='1h')
+@st.cache_resource()
 def init_model(model_name='distilbert-base-uncased'):
     tokenizer = DistilBertTokenizer.from_pretrained(model_name)
     model = DistilBertModel.from_pretrained(model_name)
     return tokenizer, model
     
-@st.cache_data(ttl='1h')
+@st.cache_data()
 def sentence_to_vec(sentence, tokenizer, model):
     inputs = tokenizer(sentence, return_tensors="pt")
     outputs = model(**inputs)
@@ -60,7 +60,7 @@ def compare_sentences(sentence1, sentence2, tokenizer, model):
     similarity = 1 - cosine(vec1, vec2)
     return similarity
     
-@st.cache_data(ttl='1h')
+@st.cache_data()
 def verb_time(words):  # Функция времени глагола
   inflection_tags = ['VBD', 'VBZ', 'VBG']
   timed_words = []
@@ -70,13 +70,13 @@ def verb_time(words):  # Функция времени глагола
         timed_words.append(inflection)
   return timed_words
     
-@st.cache_data(ttl='1h')
+@st.cache_data()
 def correct_spelling(word):
     spell = SpellChecker(language='en')
     corrected_word = spell.correction(word)
     return corrected_word
     
-@st.cache_data(ttl='1h')
+@st.cache_data()
 def to_base_form(word):# выводит в начальную форму слова
     if word is None:
         return None
@@ -84,7 +84,7 @@ def to_base_form(word):# выводит в начальную форму сло�
     base_form = token.lemma_
     return base_form
     
-@st.cache_resource(ttl='1h')
+@st.cache_resource()
 def load_fill_mask_pipeline(tokenizer, model):
     return pipeline(
         "fill-mask",
@@ -137,8 +137,13 @@ class Features:
         else:
             return 0
           
-url = 'https://raw.githubusercontent.com/Zeroflip64/Lessons_for_language/main/sub_all.csv'
-syb_all = pd.read_csv(url)
+
+@st.cache_data()
+def data():
+    url = 'https://raw.githubusercontent.com/Zeroflip64/Lessons_for_language/main/sub_all.csv'
+    return pd.read_csv(url)
+    
+syb_all = data()
 syb_all=syb_all.set_index('EN',drop=True)
 
 tokenizer, model = init_model()
