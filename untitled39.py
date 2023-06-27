@@ -52,7 +52,7 @@ def init_model(model_name='distilbert-base-uncased'):
 def sentence_to_vec(sentence, tokenizer, model):
     inputs = tokenizer(sentence, return_tensors="pt")
     with torch.no_grad(): 
-        outputs = model(**inputs)
+        outputs = model(**inputs, output_hidden_states=True)
     return outputs.hidden_states[-1].mean(dim=1).detach().numpy().squeeze()
 
 def compare_sentences(sentence1, sentence2, tokenizer, model):
