@@ -24,7 +24,7 @@ from nltk.probability import FreqDist
 from nltk import ngrams
 from textstat import textstat
 import re
-from transformers import DistilBertModel, DistilBertTokenizer
+from transformers import DistilBertForMaskedLM, DistilBertTokenizer
 import torch
 from scipy.spatial.distance import cosine
 import random
@@ -45,14 +45,15 @@ nlp=load_spacy_model('en_core_web_sm')
 @st.cache_resource()
 def init_model(model_name='distilbert-base-uncased'):
     tokenizer = DistilBertTokenizer.from_pretrained(model_name)
-    model = DistilBertModel.from_pretrained(model_name)
+    model = DistilBertForMaskedLM.from_pretrained(model_name)
     return tokenizer, model
     
 @st.cache_data()
 def sentence_to_vec(sentence, tokenizer, model):
     inputs = tokenizer(sentence, return_tensors="pt")
-    outputs = model(**inputs)
-    return outputs.last_hidden_state.mean(dim=1).detach().numpy().squeeze()
+    with torch.no_grad(): 
+        outputs = model(**inputs)
+    return outputs.hidden_states[-1].mean(dim=1).detach().numpy().squeeze()
 
 def compare_sentences(sentence1, sentence2, tokenizer, model):
     vec1 = sentence_to_vec(sentence1, tokenizer, model)
@@ -90,7 +91,7 @@ def predict_masked_word(sentence, tokenizer, model):
     inputs = tokenizer(sentence, return_tensors="pt")
     mask_token_index = torch.where(inputs["input_ids"][0] == tokenizer.mask_token_id)[0]
     outputs = model(**inputs)
-    logits = outputs.last_hidden_state[0, mask_token_index, :]
+    logits = outputs.logits[0, mask_token_index, :]
     probs = logits.softmax(dim=1)
     top_3 = probs.topk(3)
     predictions = [{'token_str': tokenizer.convert_ids_to_tokens(top_3.indices[i].item())} for i in range(3)]
