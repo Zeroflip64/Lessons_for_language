@@ -142,7 +142,7 @@ syb_all = pd.read_csv(url)
 syb_all=syb_all.set_index('EN',drop=True)
 
 tokenizer, model = init_model()
-fill_mask = load_fill_mask_pipeline()
+fill_mask = load_fill_mask_pipeline(tokenizer,model)
 
 document = None
 uploaded_file = st.file_uploader("Загрузите ваш документ", type=["txt"])  
