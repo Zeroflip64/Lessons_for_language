@@ -35,7 +35,11 @@ from transformers import pipeline
 from spellchecker import SpellChecker
 import en_core_web_sm
 import streamlit as st
-nlp=spacy.load('en_core_web_sm')
+
+@st.cache_data()
+def load_spacy_model(model_name):
+    return spacy.load(model_name)
+nlp=load_spacy_model('en_core_web_sm')
 
 
 @st.cache_resource(ttl='1h')
@@ -86,13 +90,15 @@ def load_fill_mask_pipeline():
         model="distilbert-base-multilingual-cased",
         tokenizer="distilbert-base-multilingual-cased"
     )
-    
+
+
+
 class Features:
   d = cmudict.dict()
   word_freqs = FreqDist(i.lower() for i in reuters.words())
   common_words = set(nltk_words.words())
   stop_words = set(stopwords.words('english'))
-  nlp=spacy.load('en_core_web_sm')
+  nlp=load_spacy_model('en_core_web_sm')
     
   def __init__(self, first):
       self.first = first
