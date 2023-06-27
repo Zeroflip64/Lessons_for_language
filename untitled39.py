@@ -165,18 +165,18 @@ def translater_help(lang,data):
             return data.query('RUS == @rus_word').index[0]
         except:
             st.text('К сожалению такого слова не найденно')
-
-
+    
+    
 lang_choice = st.sidebar.selectbox(
-    "Выберите язык",
-    ("eng", "rus")
+"Выберите язык",
+("eng", "rus")
 )
 
 with st.sidebar:
-    result = translater_help(lang_choice, syb_all)
+result = translater_help(lang_choice, syb_all)
 
 if result:
-    st.write(f'Результат: {result}')
+st.write(f'Результат: {result}')
 
 
 
