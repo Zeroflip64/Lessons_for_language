@@ -86,7 +86,7 @@ def to_base_form(word):# выводит в начальную форму сло�
     return base_form
     
 
-@st.cache_data()
+@st.cache_resource()
 def predict_masked_word(sentence, tokenizer, model):
     inputs = tokenizer(sentence, return_tensors="pt")
     mask_token_index = torch.where(inputs["input_ids"][0] == tokenizer.mask_token_id)[0]
