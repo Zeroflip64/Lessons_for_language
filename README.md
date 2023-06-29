@@ -1,42 +1,39 @@
 
 ## [Создание упражнений для изучения  английского языка  / Creating exercises for learning English](https://github.com/Zeroflip64/Lessons_for_language/blob/main/untitled39.py))
 
-[Ссылка на приложение/Link to the application]([https://zeroflip64-subtitles-streamlit-sub-n9wsxl.streamlit.app/](https://taskeng.streamlit.app/))
+[Ссылка на приложение/Link to the application](https://taskeng.streamlit.app/)
 
 ### Цель\Goal
-Необходимо создать приложение где пользователь может загрузить субтитры к фильму  и получит уровень знания языка который необходим для понимания этого фильма  / It is necessary to create an application where the user can download subtitles for the movie and get the level of knowledge of the language that is necessary to understand this movie
+Необходимо создать приложение которое на основании текста создаст упражнения./ It is necessary to create an application that will create exercises based on the text.
 
 
 ### Описание проекта
-Школа англйского языка заказала проект для того что бы легче определять уровень языка.Необходимо было разработать модель которая бы предсказывала уровень сложности вместе с этим предоставив небольшую информацию об этих субтитрахи так же было решено добавить возможность польщователю после определения уровня субтитров выбрать подходящие фильмы похожего уровня
+Заказчик решил интегрировать решение которое упростит и ускорит изучение языка  в его школе,где пользователь может загрузить любой текст в приложение и получить 5 заданий такие как (подобрать слово по смыслу,выбрать нужное время глагола,составить слово из букв исходя из перевода,составить предложение из слов и перевести преложение на другой язык) которые в случае неудачи можно взять новые.
 
 ENG:
-The English language School has commissioned a project to make it easier to determine the level of the language.It was necessary to develop a model that would predict the level of complexity along with providing a little information about these subtitles, it was also decided to add the ability to the user after determining the level of subtitles to select suitable films of a similar level.
+The customer decided to integrate a solution that will simplify and speed up language learning at his school, where the user can upload any text to the application and get 5 tasks such as (pick up a word by meaning, choose the right verb tense, compose a word from letters based on translation, compose a sentence from words and translate the translation into another language) which in in case of failure, you can take new ones.
 
 ### Project Description
 Проект состоит из несколкьих этапов:
-* Иначально был предоставлен набор данных с названием фильмов и их уровнем.
-* Сбор дополнительных субтитров.
-* Разработка класса с функциями которые могли бы преоставить дополнительную аналитику по субтитрам.
-* Очистка и подготовка данныхб токенизация
-* Разработка модели
-* Внедрение в Streamlit
+* Изучить способы изучения языка с использованием текста
+* Написание классов для очистки текста.
+* Создание функций с использованием моделей трансформеров для генерации упражнений.
+* Реализация через платформу streamlit
 
 ENG: 
 
 The project consists of several stages:
-* Initially, a data set with the name of the films and their level was provided.
-* Collecting additional subtitles.
-* Development of a class with functions that could provide additional analytics on subtitles.
-* Data cleaning and preparation, tokenization
-* Model development
-* Implementation in Streamlit
+* Explore ways to learn a language using text
+* Writing classes to clean up the text.
+* Creating functions using transformer models to generate exercises.
+* Implementation via the streamlit platform
 
 ### Используемые библиотеки \ Libraries used
 - **`nltk`**
-- **`textstat`**
 - **`pysrt`**
 - **`Matplotlib`**
 - **`spacy`**
-- **`Catboost`**
+- **`Transformers`**
 - **`re`**
+- **`pyinflect`**
+- **`spellchecker`**
