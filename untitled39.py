@@ -37,10 +37,34 @@ import en_core_web_sm
 import streamlit as st
 
 @st.cache_data()
+def translater(sentenses):
+  translator = Translator(to_lang="ru")
+  return translator.translate(sentenses)
+
+@st.cache_data()
 def load_spacy_model(model_name):
     return spacy.load(model_name)
 nlp=load_spacy_model('en_core_web_sm')
 
+
+@st.cache_data()
+def create_dict(word):
+    words = []
+    translates = []
+      
+    for i in word:
+        try:
+            translates.append(translater(i)
+            words.append(i)
+        except:
+            pass
+
+    book = dict(zip(words, translates))
+
+    # Создание DataFrame
+    help_words = pd.DataFrame({'ENG': list(book.keys()), 'RUS': list(book.values())})
+    
+    return help_words, book
 
 @st.cache_resource()
 def init_model(model_name='distilbert-base-uncased'):
@@ -272,48 +296,33 @@ if document is not None:
     
         st.write(f'Количество ошибок {mistakes} из {len(user_verbs)} вариантов')
     
-    def translate_book(word, purpose):#функция работы со словами
-    
-      words = []
-      translates = []
-      
-      for i in word:
-        try:
-          translates.append(syb_all.loc[i][0])
-          words.append(i)
-        except:
-          pass
-    
-      if purpose=='translate_book':
-        help_words = pd.DataFrame({'ENG':words,'RUS':translates})
-        return help_words
-      elif purpose == 'exesises':
-        book = dict(zip(words, translates))
-    
-        if st.button('Выбрать новое слово', key='new_word_button'):
-          st.session_state.reset = True
-    
-        if 'reset' not in st.session_state or st.session_state.reset:
-          st.session_state.selected_word = random.choice(list(book.keys()))
-          st.session_state.reset = False 
-    
-        selected_word = st.session_state.selected_word
-        word_translation = book[selected_word]
-    
-        shuffled_word = list(selected_word)  
-        random.shuffle(shuffled_word)
-    
-        st.write(f'Соберите слово {word_translation}')
-        st.write(f'Буквы {shuffled_word}')
-    
-        user_input = st.text_input('Ваш ответ')
-    
-        if st.button('Проверить ответ', key='check_answer_button'):
-          if user_input:
+    def exercise(book):
+    if st.button('Выбрать новое слово', key='new_word_button'):
+        st.session_state.reset = True
+
+    if 'reset' not in st.session_state or st.session_state.reset:
+        st.session_state.selected_word = random.choice(list(book.keys()))
+        st.session_state.reset = False 
+
+    selected_word = st.session_state.selected_word
+    word_translation = book[selected_word]
+
+    shuffled_word = list(selected_word)  
+    random.shuffle(shuffled_word)
+
+    shuffled_word_string = '-'.join([i.upper() for i in shuffled_word])
+
+    st.write(f'Соберите слово {word_translation}')
+    st.write(f'Буквы: {shuffled_word_string}')
+
+    user_input = st.text_input('Ваш ответ')
+
+    if st.button('Проверить ответ', key='check_answer_button'):
+        if user_input:
             if user_input == selected_word:
-              st.write('Все верно')
+                st.write('Все верно')
             else:
-              st.write('Неверно, правильный ответ:', selected_word)
+                st.write('Неверно, правильный ответ:', selected_word)
                 
     def separate_by_meaning(sentence_list):
     
@@ -396,7 +405,7 @@ if document is not None:
     st.header('Словарь')
     st.subheader('В вашем тексте есть сложные слова ,постарайтесь выучить их')
     
-    translate_b=translate_book(hard_words,'translate_book')
+    translate_b,book=create_dict(hard_words)
     st.write(translate_b)
     
     
@@ -418,7 +427,7 @@ if document is not None:
     
     st.header('Упражнение 3')
     st.subheader('Необходимо из букв составить слово')
-    translate_book(hard_words,'exesises')
+    translate_book(book)
     
     
     st.header('Упражнение 4')
