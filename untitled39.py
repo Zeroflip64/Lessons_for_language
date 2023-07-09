@@ -28,7 +28,7 @@ from transformers import DistilBertForMaskedLM, DistilBertTokenizer
 import torch
 from scipy.spatial.distance import cosine
 import random
-
+from translate import Translator
 import torch
 from pyinflect import getInflection
 from transformers import pipeline
