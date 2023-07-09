@@ -377,6 +377,9 @@ if document is not None:
         sentence = st.session_state.selected_sentence
     
         if 'selected_sentence' in st.session_state and st.session_state.selected_sentence:
+            # Перевод предложения
+            translated_sentence = translater(sentence)
+            st.write(f'Предложение : {translated_sentence}')
     
             words = sentence.split()
             random.shuffle(words)
@@ -389,6 +392,7 @@ if document is not None:
     
             if st.button('Проверить предложение',key='button_of_ok'):
                 st.write(f"Предложения совпали c точностью {np.round(compare_sentences(sentence, user_sentence,tokenizer, model),1)*100}.")
+    
     
     st.header('Словарь')
     st.subheader('В вашем тексте есть сложные слова ,постарайтесь выучить их')
