@@ -297,32 +297,32 @@ if document is not None:
         st.write(f'Количество ошибок {mistakes} из {len(user_verbs)} вариантов')
     
     def exercise(book):
-    if st.button('Выбрать новое слово', key='new_word_button'):
-        st.session_state.reset = True
-
-    if 'reset' not in st.session_state or st.session_state.reset:
-        st.session_state.selected_word = random.choice(list(book.keys()))
-        st.session_state.reset = False 
-
-    selected_word = st.session_state.selected_word
-    word_translation = book[selected_word]
-
-    shuffled_word = list(selected_word)  
-    random.shuffle(shuffled_word)
-
-    shuffled_word_string = '-'.join([i.upper() for i in shuffled_word])
-
-    st.write(f'Соберите слово {word_translation}')
-    st.write(f'Буквы: {shuffled_word_string}')
-
-    user_input = st.text_input('Ваш ответ')
-
-    if st.button('Проверить ответ', key='check_answer_button'):
-        if user_input:
-            if user_input == selected_word:
-                st.write('Все верно')
-            else:
-                st.write('Неверно, правильный ответ:', selected_word)
+        if st.button('Выбрать новое слово', key='new_word_button'):
+            st.session_state.reset = True
+    
+        if 'reset' not in st.session_state or st.session_state.reset:
+            st.session_state.selected_word = random.choice(list(book.keys()))
+            st.session_state.reset = False 
+    
+        selected_word = st.session_state.selected_word
+        word_translation = book[selected_word]
+    
+        shuffled_word = list(selected_word)  
+        random.shuffle(shuffled_word)
+    
+        shuffled_word_string = '-'.join([i.upper() for i in shuffled_word])
+    
+        st.write(f'Соберите слово {word_translation}')
+        st.write(f'Буквы: {shuffled_word_string}')
+    
+        user_input = st.text_input('Ваш ответ')
+    
+        if st.button('Проверить ответ', key='check_answer_button'):
+            if user_input:
+                if user_input == selected_word:
+                    st.write('Все верно')
+                else:
+                    st.write('Неверно, правильный ответ:', selected_word)
                 
     def separate_by_meaning(sentence_list):
     
