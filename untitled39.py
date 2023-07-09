@@ -376,8 +376,8 @@ if document is not None:
         sentence = st.session_state.selected_sentence_split
     
         if 'selected_sentence_split' in st.session_state and st.session_state.selected_sentence_split:
-            # Перевод предложения
-            translated_sentence = translater(sentence)
+            # Перевод предложения слово за словом
+            translated_sentence = ' '.join([translater(word) for word in sentence.split()])
             st.write(f'Предложение : {translated_sentence}')
     
             words = sentence.split()
