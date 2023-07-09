@@ -324,48 +324,26 @@ if document is not None:
                 else:
                     st.write('Неверно, правильный ответ:', selected_word)
                 
-    def separate_by_meaning(sentence_list):
-        
-        type_of_words = ['VERB', 'NOUN', 'PRON', 'ADJ']
-        names = []
-        new_sentences = []
-        
+    def translate_sentence(sentence_list):
         if st.button('Получить предложение', key='new_sentence_10'):
             st.session_state.reset = True
         
         if 'reset' not in st.session_state or st.session_state.reset:
-        
-            while True:
-                st.session_state.selected_sentence = random.choice(sentence_list)  # Используем предоставленный список предложений
-                if len(st.session_state.selected_sentence.split()) > 4:
-                    break
+            st.session_state.selected_sentence = random.choice(sentence_list)  # Используем предоставленный список предложений
             st.session_state.reset = False  
         
         sentence = st.session_state.selected_sentence
-        y = nlp(sentence)
+    
+        # Переводим предложение
+        translated_sentence = translater(sentence)
         
-        for token in y:
-            if token.text.istitle() and token.text not in ['Little', 'Red', 'Cap']:
-                names.append(token.text.lower())
+        st.write('Переведенное предложение:')
+        st.write(translated_sentence)
         
-        for token in y:  # Используем объекты токенов spacy
-            try:
-                if token.pos_ in type_of_words and token.text not in names:
-                    new_sentences.append(translater(token.text))  # Переводим текст токена
-                else:
-                    new_sentences.append(token.text)  # Добавляем текст токена
-            except Exception as e:
-                st.write(f"An error occurred: {e}")
-                new_sentences.append(token.text)  # Добавляем текст токена при ошибке
-        
-        st.write('Заменить руские слова на английские ')
-        new_sentences = ' '.join([token if isinstance(token, str) else token.text for token in new_sentences])
-        st.write(new_sentences)
-        
-        user_sentences = st.text_input('Введите ваше предложение')
+        user_sentences = st.text_input('Введите ваше предложение на английском')
         
         if st.button('Проверить ответ', key='check_answer_button_10'):
-            result = compare_sentences(sentence, user_sentences,tokenizer, model)
+            result = compare_sentences(sentence, user_sentences, tokenizer, model)
             st.write(f'Ваш текст совпал по смыслу на столько {np.round(result,1)*100} %')
     
     
