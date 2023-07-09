@@ -54,7 +54,7 @@ def create_dict(word):
       
     for i in word:
         try:
-            translates.append(translater(i)
+            translates.append(translater(i))
             words.append(i)
         except:
             pass
