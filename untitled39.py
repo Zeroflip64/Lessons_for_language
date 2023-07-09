@@ -57,7 +57,7 @@ def create_dict(word):
             translates.append(translater(i))
             words.append(i)
         except:
-            pass
+            print(f"An error occurred: {i}")
 
     book = dict(zip(words, translates))
 
