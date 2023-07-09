@@ -310,7 +310,7 @@ if document is not None:
         shuffled_word = list(selected_word)  
         random.shuffle(shuffled_word)
     
-        shuffled_word_string = '-'.join([i.upper() for i in shuffled_word])
+        shuffled_word_string = ' - '.join([i.upper() for i in shuffled_word])
     
         st.write(f'Соберите слово {word_translation}')
         st.write(f'Буквы: {shuffled_word_string}')
@@ -409,10 +409,9 @@ if document is not None:
     st.header('Упражнение 4')
     st.subheader('Дано предложение замените русские слова на английские и перепешите предложение')
     st.text('Нажмите кнопку получить предложение')
-    st.text('Слова требующие перевода находяться в границах |_____|')
     st.text('Введите ваше предложение и нажмите Enter')
     st.text('Нажмите кнопку узнать результат')
-    separate_by_meaning(df)
+    translate_sentence(df)
     st.text('Если ваш результат выше 85% то результат хороший поздравляем.')
     
     st.header('Упражнение 5')
