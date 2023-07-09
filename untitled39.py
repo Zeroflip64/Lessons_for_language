@@ -325,6 +325,9 @@ if document is not None:
                     st.write('Неверно, правильный ответ:', selected_word)
                 
     def translate_sentence(sentence_list):
+        # Инициализация словаря переводов
+        translation_dict = {}
+        
         if st.button('Получить предложение', key='new_sentence_10'):
             st.session_state.reset = True
         
@@ -337,6 +340,10 @@ if document is not None:
         # Переводим предложение
         translated_sentence = translater(sentence)
         
+        # Обновляем словарь переводов
+        for original, translated in zip(sentence.split(), translated_sentence.split()):
+            translation_dict[translated] = original
+    
         st.write('Переведенное предложение:')
         st.write(translated_sentence)
         
@@ -345,6 +352,13 @@ if document is not None:
         if st.button('Проверить ответ', key='check_answer_button_10'):
             result = compare_sentences(sentence, user_sentences, tokenizer, model)
             st.write(f'Ваш текст совпал по смыслу на столько {np.round(result,1)*100} %')
+        
+        # Возможность поиска переводов
+        user_word = st.text_input('Введите переведенное слово для поиска оригинала')
+        if user_word in translation_dict:
+            st.write(f'Оригинал слова "{user_word}" - "{translation_dict[user_word]}"')
+        else:
+            st.write('Слово не найдено в словаре переводов.')
     
     
     def split_of_sentences(df):
