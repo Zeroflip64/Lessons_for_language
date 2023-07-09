@@ -352,10 +352,10 @@ if document is not None:
             if token.text.istitle() and token.text not in ['Little', 'Red', 'Cap']:
                 names.append(token.text.lower())
     
-        for i in clean_sentences:
+        for i in sentence.split():
             try:
                 if i.pos_ in type_of_words and i.text not in names:
-                    new_sentences.append(syb_all.loc[i.text][0])
+                    new_sentences.append(translater(i))
                 else:
                     new_sentences.append(i.text)
             except Exception as e:
@@ -408,7 +408,9 @@ if document is not None:
     translate_b,book=create_dict(hard_words)
     st.write(translate_b)
     
-    
+    st.subheader('Перевод слова')
+    not_words=st.text_input('Введите слово у которого вы не знаете перевод')
+    st.write(translater(not_words))
     
     st.header('Упражнение 1')
     st.subheader('Упражнение где необходимо выбрать правильное слово подходящее по смыслу')
