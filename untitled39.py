@@ -427,7 +427,7 @@ if document is not None:
     
     st.header('Упражнение 3')
     st.subheader('Необходимо из букв составить слово')
-    translate_book(book)
+    exercise(book)
     
     
     st.header('Упражнение 4')
