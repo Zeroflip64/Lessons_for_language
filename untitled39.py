@@ -329,13 +329,13 @@ if document is not None:
         translation_dict = {}
         
         if st.button('Получить предложение', key='new_sentence_10'):
-            st.session_state.reset = True
+            st.session_state.reset_translate = True
         
-        if 'reset' not in st.session_state or st.session_state.reset:
-            st.session_state.selected_sentence = random.choice(sentence_list)  # Используем предоставленный список предложений
-            st.session_state.reset = False  
+        if 'reset_translate' not in st.session_state or st.session_state.reset_translate:
+            st.session_state.selected_sentence_translate = random.choice(sentence_list)  # Используем предоставленный список предложений
+            st.session_state.reset_translate = False  
         
-        sentence = st.session_state.selected_sentence
+        sentence = st.session_state.selected_sentence_translate
     
         # Переводим предложение
         translated_sentence = translater(sentence)
@@ -363,20 +363,19 @@ if document is not None:
     
     def split_of_sentences(df):
         if st.button('Получить предложение', key='new_sentence_15'):
-            st.session_state.reset = True
+            st.session_state.reset_split = True
     
-        if 'reset' not in st.session_state or st.session_state.reset:
-    
+        if 'reset_split' not in st.session_state or st.session_state.reset_split:
             while True:
-                st.session_state.selected_sentence = random.choice(df)
-                words = st.session_state.selected_sentence.split()
+                st.session_state.selected_sentence_split = random.choice(df)
+                words = st.session_state.selected_sentence_split.split()
                 if 2 < len(words) < 8:
                     break
-            st.session_state.reset = False  
+            st.session_state.reset_split = False  
     
-        sentence = st.session_state.selected_sentence
+        sentence = st.session_state.selected_sentence_split
     
-        if 'selected_sentence' in st.session_state and st.session_state.selected_sentence:
+        if 'selected_sentence_split' in st.session_state and st.session_state.selected_sentence_split:
             # Перевод предложения
             translated_sentence = translater(sentence)
             st.write(f'Предложение : {translated_sentence}')
