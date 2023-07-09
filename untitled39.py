@@ -357,10 +357,10 @@ if document is not None:
                 if i.pos_ in type_of_words and i.text not in names:
                     new_sentences.append(translater(i))
                 else:
-                    new_sentences.append(i.text)
+                    new_sentences.append(i)
             except Exception as e:
                 st.write(f"An error occurred: {e}")
-                new_sentences.append(i.text)
+                new_sentences.append(i)
     
         st.write('Заменить руские слова на английские ')
         new_sentences = ' '.join([token if isinstance(token, str) else token.text for token in new_sentences])
